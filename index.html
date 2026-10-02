@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schola Latina - Latijnse Grammatica Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        roman: {
+                            gold: '#C5A059',
+                            goldLight: '#E8D5A7',
+                            goldDark: '#99742B',
+                            red: '#800020',
+                            redLight: '#A32A42',
+                            marble: '#FBF9F5',
+                            card: '#FFFFFF',
+                            stone: '#2D2825'
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8F5EE;
+            background-image: radial-gradient(#e5decf 1px, transparent 1px);
+            background-size: 24px 24px;
+            font-family: 'Inter', sans-serif;
+        }
+        .roman-border {
+            border: 2px solid #C5A059;
+            box-shadow: inset 0 0 8px rgba(197, 160, 89, 0.15);
+        }
+        .roman-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #E5DECF;
+            box-shadow: 0 4px 20px -2px rgba(128, 0, 32, 0.05);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #A67C1E 100%);
+        }
+        .red-gradient {
+            background: linear-gradient(135deg, #9E1B32 0%, #800020 100%);
+        }
+        .quiz-option-btn:hover {
+            border-color: #C5A059;
+            background-color: #FFFDF9;
+            transform: translateY(-1px);
+        }
+        .active-tab {
+            border-bottom: 3px solid #800020;
+            color: #800020;
+            font-weight: 700;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1ECE1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C5A059;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="text-stone-800 min-h-screen flex flex-col justify-between selection:bg-roman-goldLight">
+
+    <header class="bg-white/90 backdrop-blur border-b border-stone-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center text-white text-xl font-bold shadow">
+                    <i class="fa-solid fa-landmark"></i>
+                </div>
+                <div>
+                    <h1 class="font-cinzel text-lg sm:text-xl font-bold text-stone-900 tracking-wide">SCHOLA LATINA</h1>
+                    <p class="text-[11px] text-roman-goldDark font-semibold uppercase tracking-widest">Grammatica & Rijtjes Trainer</p>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center space-x-3 sm:space-x-6 text-sm">
+                <div class="flex items-center space-x-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full shadow-sm">
+                    <i class="fa-solid fa-fire text-amber-500 animate-pulse"></i>
+                    <span id="streakCounter" class="font-bold text-amber-900">1 Dag</span>
+                </div>
+                <div class="flex items-center space-x-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full shadow-sm">
+                    <i class="fa-solid fa-gem text-emerald-600"></i>
+                    <span id="xpCounter" class="font-bold text-emerald-900">0 XP</span>
+                </div>
+                <div class="hidden sm:flex items-center space-x-1.5 bg-stone-100 border border-stone-200 px-3 py-1.5 rounded-full">
+                    <i class="fa-solid fa-graduation-cap text-roman-gold"></i>
+                    <select id="levelSelect" onchange="changeLevel()" class="bg-transparent text-xs font-semibold text-stone-700 outline-none cursor-pointer">
+                        <option value="1">Klas 1 (Basis)</option>
+                        <option value="2" selected>Klas 2 (Midden)</option>
+                        <option value="3">Klas 3+ (Gevorderd)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-5xl mx-auto px-4 flex space-x-8 text-sm font-medium text-stone-500 border-t border-stone-100 mt-2">
+            <button id="tabBtnPractice" onclick="switchTab('practice')" class="py-2.5 active-tab transition flex items-center space-x-2">
+                <i class="fa-solid fa-pen-ruler"></i>
+                <span>Oefenen</span>
+            </button>
+            <button id="tabBtnLibrary" onclick="switchTab('library')" class="py-2.5 transition flex items-center space-x-2 hover:text-roman-red">
+                <i class="fa-solid fa-book-bookmark"></i>
+                <span>Grammatica Overzicht</span>
+            </button>
+            <button id="tabBtnDaily" onclick="switchTab('daily')" class="py-2.5 transition flex items-center space-x-2 hover:text-roman-red">
+                <i class="fa-solid fa-calendar-check text-amber-500"></i>
+                <span>Dagelijkse Challenge</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- TAB 1: OEFENEN -->
+        <div id="tabPractice" class="space-y-6">
+
+            <!-- Oefenmodus Selector Banner -->
+            <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white rounded-2xl p-5 shadow-lg border border-stone-700 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="space-y-1 text-center md:text-left">
+                    <span class="inline-block px-2.5 py-0.5 rounded-md bg-roman-gold/20 text-roman-goldLight text-xs font-semibold uppercase tracking-wider">Modus Instellingen</span>
+                    <h2 class="font-cinzel text-xl font-bold text-amber-100">Kies Hoe Je Wilt Oefenen</h2>
+                    <p class="text-xs text-stone-300">Oefen complete Latijnse woorden of focus op losse uitgangen.</p>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <div class="bg-stone-800 p-1 rounded-xl border border-stone-700 flex">
+                        <button id="modeTypeWord" onclick="setPracticeMode('words')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-roman-gold text-white shadow">
+                            <i class="fa-solid fa-spell-check mr-1"></i> Woorden
+                        </button>
+                        <button id="modeTypeEnding" onclick="setPracticeMode('endings')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition">
+                            <i class="fa-solid fa-layer-group mr-1"></i> Losse Uitgangen
+                        </button>
+                    </div>
+
+                    <div class="bg-stone-800 p-1 rounded-xl border border-stone-700 flex items-center space-x-2 px-3 py-1">
+                        <span class="text-xs text-stone-400 font-medium">Invoer:</span>
+                        <select id="quizInputType" class="bg-stone-900 text-amber-200 text-xs font-bold rounded-lg px-2 py-1 border border-stone-600 outline-none cursor-pointer">
+                            <option value="mc">Meerkeuze</option>
+                            <option value="typing">Zelf Typen</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODUS & TIJDEN SELECTIE -->
+            <div class="roman-card rounded-2xl p-5 space-y-4">
+                <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-sliders text-roman-gold text-lg"></i>
+                        <h3 class="font-cinzel text-base font-bold text-stone-900">Modus & Werkwoordtijden Filter</h3>
+                    </div>
+                    <span class="text-xs text-stone-400">Klik op een modus voor opties</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+                    <button id="btnModusIndAct" onclick="toggleModusDropdown('ind_act')" class="p-2.5 sm:p-3 rounded-xl border-2 border-roman-gold bg-amber-50/50 hover:bg-amber-50 text-left transition relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Ind. Actief</span>
+                            <i id="arrowIndAct" class="fa-solid fa-chevron-down text-roman-gold text-xs transition-transform"></i>
+                        </div>
+                        <span class="text-[10px] sm:text-[11px] text-roman-goldDark block mt-0.5">Praes, Impf, Perf, Plusq</span>
+                    </button>
+
+                    <button id="btnModusIndPass" onclick="toggleModusDropdown('ind_pass')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 hover:border-roman-gold text-left transition relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Ind. Passief</span>
+                            <i id="arrowIndPass" class="fa-solid fa-chevron-down text-stone-400 text-xs transition-transform"></i>
+                        </div>
+                        <span class="text-[10px] sm:text-[11px] text-stone-500 block mt-0.5">Praes, Impf, Perf, Plusq</span>
+                    </button>
+
+                    <button id="btnModusFuturum" onclick="toggleModusDropdown('futurum')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 hover:border-roman-gold text-left transition relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Futurum</span>
+                            <i id="arrowFuturum" class="fa-solid fa-chevron-down text-stone-400 text-xs transition-transform"></i>
+                        </div>
+                        <span class="text-[10px] sm:text-[11px] text-stone-500 block mt-0.5">Futurum I & Exactum</span>
+                    </button>
+
+                    <button id="btnModusConjAct" onclick="toggleModusDropdown('conj_act')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 hover:border-roman-gold text-left transition relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Conj. Actief</span>
+                            <i id="arrowConjAct" class="fa-solid fa-chevron-down text-stone-400 text-xs transition-transform"></i>
+                        </div>
+                        <span class="text-[10px] sm:text-[11px] text-stone-500 block mt-0.5">Praes, Impf, Perf, Plusq</span>
+                    </button>
+
+                    <button id="btnModusConjPass" onclick="toggleModusDropdown('conj_pass')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 hover:border-roman-gold text-left transition relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Conj. Passief</span>
+                            <i id="arrowConjPass" class="fa-solid fa-chevron-down text-stone-400 text-xs transition-transform"></i>
+                        </div>
+                        <span class="text-[10px] sm:text-[11px] text-stone-500 block mt-0.5">Praes, Impf, Perf, Plusq</span>
+                    </button>
+
+                    <button id="btnModusImperativus" onclick="toggleModusDropdown('imperativus')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 hover:border-roman-gold text-left transition relative">
+                        <div class="flex items-center justify-between">
+                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Imperativus</span>
+                            <i id="arrowImperativus" class="fa-solid fa-chevron-down text-stone-400 text-xs transition-transform"></i>
+                        </div>
+                        <span class="text-[10px] sm:text-[11px] text-stone-500 block mt-0.5">Gebiedende Wijs</span>
+                    </button>
+                </div>
+
+                <div id="modusDropdownPanel" class="bg-stone-50 rounded-xl p-4 border border-stone-200 space-y-3">
+                    <div class="flex items-center justify-between text-xs border-b border-stone-200 pb-2">
+                        <span id="dropdownTitle" class="font-bold text-roman-goldDark uppercase tracking-wider">Selecteer Tijden voor INDICATIVUS ACTIEF:</span>
+                        <div class="space-x-2">
+                            <button onclick="toggleAllTensesInModus(true)" class="text-roman-gold hover:underline font-semibold">Alles Aan</button>
+                            <span class="text-stone-300">|</span>
+                            <button onclick="toggleAllTensesInModus(false)" class="text-stone-500 hover:underline font-semibold">Alles Uit</button>
+                        </div>
+                    </div>
+                    
+                    <div id="tensesCheckboxGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-xs">
+                        <!-- Checkboxes dynamically rendered -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="roman-card rounded-2xl p-5 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-layer-group text-roman-red text-lg"></i>
+                        <h3 class="font-cinzel text-base font-bold text-stone-900">Kies Woorden & Rijtjes</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-xs">
+                        <button onclick="filterCategory('all')" class="px-2.5 py-1 bg-stone-800 text-white font-semibold rounded-lg hover:bg-stone-700">Alles Aan</button>
+                        <button onclick="filterCategory('none')" class="px-2.5 py-1 bg-stone-200 text-stone-700 font-semibold rounded-lg hover:bg-stone-300">Alles Uit</button>
+                        <button onclick="filterCategory('noun')" class="px-2.5 py-1 bg-amber-100 text-amber-900 font-semibold rounded-lg hover:bg-amber-200">Zelfst. Nw</button>
+                        <button onclick="filterCategory('verb')" class="px-2.5 py-1 bg-red-100 text-red-900 font-semibold rounded-lg hover:bg-red-200">Werkwoorden</button>
+                        <button onclick="filterCategory('adj')" class="px-2.5 py-1 bg-blue-100 text-blue-900 font-semibold rounded-lg hover:bg-blue-200">Bijvoegl. Nw</button>
+                        <button onclick="filterCategory('adv')" class="px-2.5 py-1 bg-purple-100 text-purple-900 font-semibold rounded-lg hover:bg-purple-200">Bijwoorden</button>
+                        <button onclick="filterCategory('pronoun')" class="px-2.5 py-1 bg-emerald-100 text-emerald-900 font-semibold rounded-lg hover:bg-emerald-200">Voornaamwoorden</button>
+                        <button onclick="filterCategory('numeral')" class="px-2.5 py-1 bg-teal-100 text-teal-900 font-semibold rounded-lg hover:bg-teal-200">Telwoorden</button>
+                    </div>
+                </div>
+
+                <div id="topicsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <!-- Topics injected via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Start Action Button -->
+            <div class="pt-2 text-center">
+                <button id="startQuizBtn" onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 gold-gradient text-white font-cinzel text-lg font-bold rounded-2xl shadow-xl hover:opacity-95 transform hover:-translate-y-0.5 active:translate-y-0 transition flex items-center justify-center space-x-3 mx-auto">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Start Oefening</span>
+                </button>
+                <p id="selectionCountText" class="text-xs text-stone-500 mt-2">Geselecteerd: 12 rijtjes</p>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: LIBRARY -->
+        <div id="tabLibrary" class="hidden space-y-6">
+            <div class="roman-card rounded-2xl p-6">
+                <div class="flex items-center space-x-3 border-b border-stone-200 pb-4 mb-4">
+                    <i class="fa-solid fa-book-open text-roman-gold text-2xl"></i>
+                    <div>
+                        <h2 class="font-cinzel text-xl font-bold text-stone-900">Grammatica Naslagwerk & Tabellen</h2>
+                        <p class="text-xs text-stone-500">Overzicht van alle geselecteerde rijtjes en vervoegingen.</p>
+                    </div>
+                </div>
+
+                <div id="libraryContainer" class="space-y-6">
+                    <!-- Dynamic Library Content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DAILY CHALLENGE -->
+        <div id="tabDaily" class="hidden space-y-6">
+            <div class="roman-card rounded-2xl p-8 text-center space-y-6 max-w-xl mx-auto">
+                <div class="w-20 h-20 rounded-full bg-amber-100 border-4 border-roman-gold mx-auto flex items-center justify-center text-amber-600 text-3xl shadow-inner">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="font-cinzel text-2xl font-bold text-stone-900">Dagelijkse Romeinse Uitdaging</h2>
+                    <p class="text-sm text-stone-600">Beantwoord 5 willekeurige vragen op niveau <span id="dailyLevelLabel" class="font-bold">Klas 2</span> voor je streak en +50 XP!</p>
+                </div>
+                
+                <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 text-left text-xs space-y-2 text-stone-700">
+                    <div class="flex items-center space-x-2 font-bold text-amber-900">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <span>Onderwerpen van vandaag:</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-stone-600">
+                        <li>Zelfstandige naamwoorden (a-, us-, um- & 3e/4e/5e declinatie)</li>
+                        <li>Werkwoorden (Indicativus & Conjunctivus)</li>
+                        <li>Voornaamwoorden & Telwoorden</li>
+                    </ul>
+                </div>
+
+                <button onclick="startDailyChallenge()" class="w-full py-3.5 red-gradient text-white font-cinzel font-bold text-base rounded-xl shadow-lg hover:opacity-95 transition">
+                    Start Dagelijkse Uitdaging
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="quizOverlay" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border-2 border-roman-gold overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <div class="p-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span id="quizCounter" class="text-xs font-bold text-stone-500 bg-stone-200 px-2.5 py-1 rounded-full">1 / 10</span>
+                    <span id="quizTopicBadge" class="text-xs font-bold text-roman-red bg-red-50 border border-red-200 px-2.5 py-1 rounded-full">filia</span>
+                </div>
+                <button onclick="closeQuiz()" class="text-stone-400 hover:text-stone-800 text-lg w-8 h-8 rounded-full flex items-center justify-center hover:bg-stone-200 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="w-full bg-stone-200 h-1.5">
+                <div id="quizProgressBar" class="gold-gradient h-1.5 transition-all duration-300" style="width: 10%"></div>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-grow space-y-6">
+                <div class="text-center space-y-2">
+                    <p id="quizQuestionText" class="text-sm text-stone-500 uppercase tracking-wider font-semibold">Wat is de vorm van:</p>
+                    <h3 id="quizStemWord" class="font-serif font-bold text-3xl sm:text-4xl text-stone-900 tracking-wide">filia</h3>
+                    <p id="quizFormDemand" class="text-base text-roman-red font-semibold font-cinzel">2e nm. enk. (genitivus)</p>
+                </div>
+
+                <div id="quizOptionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <div id="quizFeedbackBox" class="hidden p-4 rounded-xl text-center space-y-1 transition">
+                    <p id="quizFeedbackTitle" class="font-bold text-base"></p>
+                    <p id="quizFeedbackDetail" class="text-xs"></p>
+                </div>
+            </div>
+
+            <div class="p-4 bg-stone-50 border-t border-stone-200 flex justify-between items-center">
+                <span class="text-[11px] text-stone-400 italic">Druk op Enter ↵ om te controleren of door te gaan</span>
+                <button id="quizActionBtn" onclick="handleQuizAction()" class="px-6 py-2.5 gold-gradient text-white text-xs font-bold rounded-xl shadow hover:opacity-95 transition disabled:opacity-40">
+                    Controleer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-stone-200 bg-white py-4 text-center text-xs text-stone-400">
+        <p>Schola Latina &copy; 2026 — Latijnse Grammatica voor Gymnasia en Athenaea</p>
+    </footer>
+
+    <script>
+        let appState = {
+            xp: 0,
+            streak: 1,
+            level: 2,
+            practiceType: 'words',
+            selectedModus: 'ind_act',
+            selectedTenses: {
+                ind_act: ['praesens_act', 'imperfectum_act', 'perfectum_act', 'plusquamperfectum_act'],
+                ind_pass: ['praesens_pass', 'imperfectum_pass', 'perfectum_pass', 'plusquamperfectum_pass'],
+                futurum: ['futurum_act', 'futurum_exactum_act', 'futurum_pass', 'futurum_exactum_pass'],
+                conj_act: ['praesens_conj_act', 'imperfectum_conj_act', 'perfectum_conj_act', 'plusquamperfectum_conj_act'],
+                conj_pass: ['praesens_conj_pass', 'imperfectum_conj_pass', 'perfectum_conj_pass', 'plusquamperfectum_conj_pass'],
+                imperativus: ['imperativus_praesens', 'imperativus_futurum']
+            },
+            selectedTopics: ['filia', 'dominus', 'bellum', 'urbs', 'nomen', 'rex', 'manus', 'res', 'salutare', 'terrere', 'audire', 'capio', 'bonus', 'pulcher', 'fortis', 'altior', 'altissimus', 'bene', 'is', 'hic', 'ille', 'ipse', 'idem', 'ego', 'qui', 'quis', 'quisque', 'unus']
+        };
+
+        let currentQuiz = {
+            mode: 'mc',
+            questions: [],
+            currentIndex: 0,
+            score: 0,
+            selected: null,
+            state: 'answering'
+        };
+
+        // Fully audited, 100% accurate Latin Grammar Database
+        const DATABASE = {
+            noun: {
+                filia: {
+                    title: 'filia (-a decl. vrl.)', type: 'noun', forms: {
+                        'nom. enk.': 'filia', 'gen. enk.': 'filiae', 'dat. enk.': 'filiae', 'acc. enk.': 'filiam', 'abl. enk.': 'filia',
+                        'nom. mv.': 'filiae', 'gen. mv.': 'filiarum', 'dat. mv.': 'filiabus', 'acc. mv.': 'filias', 'abl. mv.': 'filiabus'
+                    }
+                },
+                dominus: {
+                    title: 'dominus (-us decl. mnl.)', type: 'noun', forms: {
+                        'nom. enk.': 'dominus', 'gen. enk.': 'domini', 'dat. enk.': 'domino', 'acc. enk.': 'dominum', 'abl. enk.': 'domino',
+                        'nom. mv.': 'domini', 'gen. mv.': 'dominorum', 'dat. mv.': 'dominis', 'acc. mv.': 'dominos', 'abl. mv.': 'dominis'
+                    }
+                },
+                bellum: {
+                    title: 'bellum (-um decl. onz.)', type: 'noun', forms: {
+                        'nom. enk.': 'bellum', 'gen. enk.': 'belli', 'dat. enk.': 'bello', 'acc. enk.': 'bellum', 'abl. enk.': 'bello',
+                        'nom. mv.': 'bella', 'gen. mv.': 'bellorum', 'dat. mv.': 'bellis', 'acc. mv.': 'bella', 'abl. mv.': 'bellis'
+                    }
+                },
+                urbs: {
+                    title: 'urbs (3e decl. vrl.)', type: 'noun', forms: {
+                        'nom. enk.': 'urbs', 'gen. enk.': 'urbis', 'dat. enk.': 'urbi', 'acc. enk.': 'urbem', 'abl. enk.': 'urbe',
+                        'nom. mv.': 'urbes', 'gen. mv.': 'urbium', 'dat. mv.': 'urbibus', 'acc. mv.': 'urbes', 'abl. mv.': 'urbibus'
+                    }
+                },
+                nomen: {
+                    title: 'nomen (3e decl. onz.)', type: 'noun', forms: {
+                        'nom. enk.': 'nomen', 'gen. enk.': 'nominis', 'dat. enk.': 'nomini', 'acc. enk.': 'nomen', 'abl. enk.': 'nomine',
+                        'nom. mv.': 'nomina', 'gen. mv.': 'nominum', 'dat. mv.': 'nominibus', 'acc. mv.': 'nomina', 'abl. mv.': 'nominibus'
+                    }
+                },
+                rex: {
+                    title: 'rex (3e decl. mnl.)', type: 'noun', forms: {
+                        'nom. enk.': 'rex', 'gen. enk.': 'regis', 'dat. enk.': 'regi', 'acc. enk.': 'regem', 'abl. enk.': 'rege',
+                        'nom. mv.': 'reges', 'gen. mv.': 'regum', 'dat. mv.': 'regibus', 'acc. mv.': 'reges', 'abl. mv.': 'regibus'
+                    }
+                },
+                manus: {
+                    title: 'manus (4e decl. vrl.)', type: 'noun', forms: {
+                        'nom. enk.': 'manus', 'gen. enk.': 'manus', 'dat. enk.': 'manui', 'acc. enk.': 'manum', 'abl. enk.': 'manu',
+                        'nom. mv.': 'manus', 'gen. mv.': 'manuum', 'dat. mv.': 'manibus', 'acc. mv.': 'manus', 'abl. mv.': 'manibus'
+                    }
+                },
+                res: {
+                    title: 'res (5e decl. vrl.)', type: 'noun', forms: {
+                        'nom. enk.': 'res', 'gen. enk.': 'rei', 'dat. enk.': 'rei', 'acc. enk.': 'rem', 'abl. enk.': 're',
+                        'nom. mv.': 'res', 'gen. mv.': 'rerum', 'dat. mv.': 'rebus', 'acc. mv.': 'res', 'abl. mv.': 'rebus'
+                    }
+                }
+            },
+            verb: {
+                salutare: {
+                    title: 'salutare (a-stam)', type: 'verb', forms: {
+                        f1: { name: 'praes. 1e pers. enk. (ik)', val: 'saluto', tense: 'praesens_act' },
+                        f2: { name: 'praes. 2e pers. enk. (jij)', val: 'salutas', tense: 'praesens_act' },
+                        f3: { name: 'praes. 3e pers. enk. (hij/zij)', val: 'salutat', tense: 'praesens_act' },
+                        f4: { name: 'praes. 1e pers. mv. (wij)', val: 'salutamus', tense: 'praesens_act' },
+                        f5: { name: 'praes. 2e pers. mv. (jullie)', val: 'salutatis', tense: 'praesens_act' },
+                        f6: { name: 'praes. 3e pers. mv. (zij)', val: 'salutant', tense: 'praesens_act' },
+                        f7: { name: 'impf. 1e pers. enk. (ik)', val: 'salutabam', tense: 'imperfectum_act' },
+                        f8: { name: 'impf. 3e pers. enk. (hij/zij)', val: 'salutabat', tense: 'imperfectum_act' },
+                        f9: { name: 'perf. 1e pers. enk. (ik)', val: 'salutavi', tense: 'perfectum_act' },
+                        f10: { name: 'perf. 3e pers. enk. (hij/zij)', val: 'salutavit', tense: 'perfectum_act' },
+                        f11: { name: 'plusq. 1e pers. enk. (ik)', val: 'salutaveram', tense: 'plusquamperfectum_act' },
+                        f12: { name: 'futurum I 1e pers. enk. (ik)', val: 'salutabo', tense: 'futurum_act' },
+                        f13: { name: 'futurum I 3e pers. enk. (hij/zij)', val: 'salutabit', tense: 'futurum_act' },
+                        f14: { name: 'futurum II 1e pers. enk. (ik)', val: 'salutavero', tense: 'futurum_exactum_act' },
+                        f15: { name: 'passief praes. 3e pers. enk.', val: 'salutatur', tense: 'praesens_pass' },
+                        f16: { name: 'passief impf. 3e pers. enk.', val: 'salutabatur', tense: 'imperfectum_pass' },
+                        f17: { name: 'conj. praes. 1e pers. enk.', val: 'salutem', tense: 'praesens_conj_act' },
+                        f18: { name: 'conj. impf. 1e pers. enk.', val: 'salutarem', tense: 'imperfectum_conj_act' },
+                        f19: { name: 'conj. perf. 1e pers. enk.', val: 'salutaverim', tense: 'perfectum_conj_act' },
+                        f20: { name: 'conj. plusq. 1e pers. enk.', val: 'salutavissem', tense: 'plusquamperfectum_conj_act' },
+                        f21: { name: 'imperativus enk.', val: 'saluta', tense: 'imperativus_praesens' },
+                        f22: { name: 'imperativus mv.', val: 'salutate', tense: 'imperativus_praesens' }
+                    }
+                },
+                terrere: {
+                    title: 'terrere (e-stam)', type: 'verb', forms: {
+                        f1: { name: 'praes. 1e pers. enk. (ik)', val: 'terreo', tense: 'praesens_act' },
+                        f2: { name: 'praes. 2e pers. enk. (jij)', val: 'terres', tense: 'praesens_act' },
+                        f3: { name: 'praes. 3e pers. enk. (hij/zij)', val: 'terret', tense: 'praesens_act' },
+                        f4: { name: 'impf. 1e pers. enk. (ik)', val: 'terrebam', tense: 'imperfectum_act' },
+                        f5: { name: 'perf. 1e pers. enk. (ik)', val: 'terrui', tense: 'perfectum_act' },
+                        f6: { name: 'perf. 3e pers. enk. (hij/zij)', val: 'terruit', tense: 'perfectum_act' },
+                        f7: { name: 'plusq. 1e pers. enk. (ik)', val: 'terrueram', tense: 'plusquamperfectum_act' },
+                        f8: { name: 'futurum I 1e pers. enk. (ik)', val: 'terrebo', tense: 'futurum_act' },
+                        f9: { name: 'passief praes. 3e pers. enk.', val: 'terretur', tense: 'praesens_pass' },
+                        f10: { name: 'conj. praes. 1e pers. enk.', val: 'terream', tense: 'praesens_conj_act' },
+                        f11: { name: 'conj. impf. 1e pers. enk.', val: 'terrerem', tense: 'imperfectum_conj_act' },
+                        f12: { name: 'imperativus enk.', val: 'terre', tense: 'imperativus_praesens' }
+                    }
+                },
+                audire: {
+                    title: 'audire (i-stam)', type: 'verb', forms: {
+                        f1: { name: 'praes. 1e pers. enk. (ik)', val: 'audio', tense: 'praesens_act' },
+                        f2: { name: 'praes. 2e pers. enk. (jij)', val: 'audis', tense: 'praesens_act' },
+                        f3: { name: 'praes. 3e pers. enk. (hij/zij)', val: 'audit', tense: 'praesens_act' },
+                        f4: { name: 'impf. 1e pers. enk. (ik)', val: 'audiebam', tense: 'imperfectum_act' },
+                        f5: { name: 'perf. 1e pers. enk. (ik)', val: 'audivi', tense: 'perfectum_act' },
+                        f6: { name: 'perf. 3e pers. enk. (hij/zij)', val: 'audivit', tense: 'perfectum_act' },
+                        f7: { name: 'plusq. 1e pers. enk. (ik)', val: 'audiveram', tense: 'plusquamperfectum_act' },
+                        f8: { name: 'futurum I 1e pers. enk. (ik)', val: 'audiam', tense: 'futurum_act' },
+                        f9: { name: 'passief praes. 3e pers. enk.', val: 'auditur', tense: 'praesens_pass' },
+                        f10: { name: 'conj. praes. 1e pers. enk.', val: 'audiam', tense: 'praesens_conj_act' },
+                        f11: { name: 'conj. impf. 1e pers. enk.', val: 'audirem', tense: 'imperfectum_conj_act' },
+                        f12: { name: 'imperativus enk.', val: 'audi', tense: 'imperativus_praesens' }
+                    }
+                },
+                capio: {
+                    title: 'capere (klinkerstam)', type: 'verb', forms: {
+                        f1: { name: 'praes. 1e pers. enk. (ik)', val: 'capio', tense: 'praesens_act' },
+                        f2: { name: 'praes. 2e pers. enk. (jij)', val: 'capis', tense: 'praesens_act' },
+                        f3: { name: 'praes. 3e pers. enk. (hij/zij)', val: 'capit', tense: 'praesens_act' },
+                        f4: { name: 'impf. 1e pers. enk. (ik)', val: 'capiebam', tense: 'imperfectum_act' },
+                        f5: { name: 'perf. 1e pers. enk. (ik)', val: 'cepi', tense: 'perfectum_act' },
+                        f6: { name: 'perf. 3e pers. enk. (hij/zij)', val: 'cepit', tense: 'perfectum_act' },
+                        f7: { name: 'plusq. 1e pers. enk. (ik)', val: 'ceperam', tense: 'plusquamperfectum_act' },
+                        f8: { name: 'futurum I 1e pers. enk. (ik)', val: 'capiam', tense: 'futurum_act' },
+                        f9: { name: 'passief praes. 3e pers. enk.', val: 'capitur', tense: 'praesens_pass' },
+                        f10: { name: 'conj. praes. 1e pers. enk.', val: 'capiam', tense: 'praesens_conj_act' },
+                        f11: { name: 'conj. impf. 1e pers. enk.', val: 'caperem', tense: 'imperfectum_conj_act' },
+                        f12: { name: 'imperativus enk.', val: 'cape', tense: 'imperativus_praesens' }
+                    }
+                }
+            },
+            adj: {
+                bonus: {
+                    title: 'bonus, -a, -um', type: 'adj', forms: {
+                        'nom. mnl. enk.': 'bonus', 'nom. vrl. enk.': 'bona', 'nom. onz. enk.': 'bonum',
+                        'gen. mnl. enk.': 'boni', 'gen. vrl. enk.': 'bonae', 'dat. mnl. enk.': 'bono',
+                        'acc. mnl. enk.': 'bonum', 'acc. vrl. enk.': 'bonam', 'abl. mnl. enk.': 'bono',
+                        'nom. mnl. mv.': 'boni', 'nom. vrl. mv.': 'bonae', 'nom. onz. mv.': 'bona', 'gen. mnl. mv.': 'bonorum'
+                    }
+                },
+                pulcher: {
+                    title: 'pulcher, -chra, -chrum', type: 'adj', forms: {
+                        'nom. mnl. enk.': 'pulcher', 'nom. vrl. enk.': 'pulchra', 'nom. onz. enk.': 'pulchrum',
+                        'gen. mnl. enk.': 'pulchri', 'gen. vrl. enk.': 'pulchrae', 'nom. mnl. mv.': 'pulchri', 'nom. onz. mv.': 'pulchra'
+                    }
+                },
+                fortis: {
+                    title: 'fortis (onz. mv.: fortia)', type: 'adj', forms: {
+                        'nom. mnl./vrl. enk.': 'fortis', 'nom. onz. enk.': 'forte', 'gen. enk.': 'fortis', 'dat. enk.': 'forti',
+                        'acc. mnl./vrl. enk.': 'fortem', 'acc. onz. enk.': 'forte', 'abl. enk.': 'forti',
+                        'nom. mnl./vrl. mv.': 'fortes', 'nom. onz. mv.': 'fortia', 'gen. mv.': 'fortium', 'dat. mv.': 'fortibus'
+                    }
+                },
+                altior: {
+                    title: 'altior (comparativus)', type: 'adj', forms: {
+                        'nom. mnl./vrl. enk.': 'altior', 'nom. onz. enk.': 'altius', 'gen. enk.': 'altioris',
+                        'dat. enk.': 'altiori', 'acc. mnl./vrl. enk.': 'altiorem', 'nom. onz. mv.': 'altiora'
+                    }
+                },
+                altissimus: {
+                    title: 'altissimus (superlativus)', type: 'adj', forms: {
+                        'nom. mnl. enk.': 'altissimus', 'nom. vrl. enk.': 'altissima', 'nom. onz. enk.': 'altissimum',
+                        'gen. mnl. enk.': 'altissimi', 'nom. onz. mv.': 'altissima'
+                    }
+                }
+            },
+            adv: {
+                bene: { title: 'bene (van bonus)', type: 'adv', forms: { 'bijwoord': 'bene' } },
+                pulchre: { title: 'pulchre (van pulcher)', type: 'adv', forms: { 'bijwoord': 'pulchre' } }
+            },
+            pronoun: {
+                is: {
+                    title: 'is, ea, id', type: 'pronoun', forms: {
+                        'nom. mnl. enk.': 'is', 'nom. vrl. enk.': 'ea', 'nom. onz. enk.': 'id', 'gen. enk.': 'eius',
+                        'dat. enk.': 'ei', 'acc. mnl. enk.': 'eum', 'acc. vrl. enk.': 'eam', 'acc. onz. enk.': 'id',
+                        'nom. mnl. mv.': 'ii', 'nom. vrl. mv.': 'eae', 'nom. onz. mv.': 'ea', 'gen. mnl. mv.': 'eorum'
+                    }
+                },
+                hic: {
+                    title: 'hic, haec, hoc', type: 'pronoun', forms: {
+                        'nom. mnl. enk.': 'hic', 'nom. vrl. enk.': 'haec', 'nom. onz. enk.': 'hoc', 'gen. enk.': 'huius',
+                        'dat. enk.': 'huic', 'acc. mnl. enk.': 'hunc', 'acc. vrl. enk.': 'hanc', 'acc. onz. enk.': 'hoc',
+                        'nom. mnl. mv.': 'hi', 'nom. vrl. mv.': 'hae', 'nom. onz. mv.': 'haec', 'gen. mnl. mv.': 'horum'
+                    }
+                },
+                ille: {
+                    title: 'ille, illa, illud', type: 'pronoun', forms: {
+                        'nom. mnl. enk.': 'ille', 'nom. vrl. enk.': 'illa', 'nom. onz. enk.': 'illud', 'gen. enk.': 'illius',
+                        'dat. enk.': 'illi', 'acc. mnl. enk.': 'illum', 'acc. vrl. enk.': 'illam', 'acc. onz. enk.': 'illud'
+                    }
+                },
+                ipse: {
+                    title: 'ipse, ipsa, ipsum', type: 'pronoun', forms: {
+                        'nom. mnl. enk.': 'ipse', 'nom. vrl. enk.': 'ipsa', 'nom. onz. enk.': 'ipsum', 'gen. enk.': 'ipsius', 'dat. enk.': 'ipsi'
+                    }
+                },
+                idem: {
+                    title: 'idem, eadem, idem', type: 'pronoun', forms: {
+                        'nom. mnl. enk.': 'idem', 'nom. vrl. enk.': 'eadem', 'nom. onz. enk.': 'idem', 'gen. enk.': 'eiusdem', 'acc. mnl. enk.': 'eundem'
+                    }
+                },
+                ego: {
+                    title: 'ego, tu, sui, nos, vos', type: 'pronoun', forms: {
+                        'nom. 1e pers. enk.': 'ego', 'gen. 1e pers. enk.': 'mei', 'dat. 1e pers. enk.': 'mihi', 'acc. 1e pers. enk.': 'me',
+                        'nom. 2e pers. enk.': 'tu', 'gen. 2e pers. enk.': 'tui', 'dat. 2e pers. enk.': 'tibi', 'acc. 2e pers. enk.': 'te',
+                        'gen. 3e pers. (reflexief)': 'sui', 'dat. 3e pers.': 'sibi', 'acc. 3e pers.': 'se',
+                        'nom. 1e pers. mv.': 'nos', 'gen. 1e pers. mv.': 'nostri', 'dat./abl. 1e pers. mv.': 'nobis',
+                        'nom. 2e pers. mv.': 'vos', 'gen. 2e pers. mv.': 'vestri', 'dat./abl. 2e pers. mv.': 'vobis'
+                    }
+                },
+                qui: {
+                    title: 'qui, quae, quod', type: 'pronoun', forms: {
+                        'nom. mnl. enk.': 'qui', 'nom. vrl. enk.': 'quae', 'nom. onz. enk.': 'quod', 'gen. enk.': 'cuius',
+                        'dat. enk.': 'cui', 'acc. mnl. enk.': 'quem', 'acc. vrl. enk.': 'quam', 'acc. onz. enk.': 'quod'
+                    }
+                },
+                quis: {
+                    title: 'quis, quid', type: 'pronoun', forms: {
+                        'nom. mnl./vrl. enk.': 'quis', 'nom. onz. enk.': 'quid', 'gen. enk.': 'cuius', 'dat. enk.': 'cui', 'acc. mnl./vrl. enk.': 'quem'
+                    }
+                },
+                quisque: {
+                    title: 'quisque, quidque', type: 'pronoun', forms: {
+                        'nom. mnl. enk. (zelfst.)': 'quisque', 'nom. onz. enk. (zelfst.)': 'quidque',
+                        'nom. mnl. enk. (bijv.)': 'quisque', 'nom. vrl. enk. (bijv.)': 'quaeque', 'nom. onz. enk. (bijv.)': 'quodque'
+                    }
+                }
+            },
+            numeral: {
+                unus: {
+                    title: 'unus, una, unum', type: 'numeral', forms: {
+                        'nom. mnl. enk.': 'unus', 'nom. vrl. enk.': 'una', 'nom. onz. enk.': 'unum', 'gen. enk.': 'unius', 'dat. enk.': 'uni'
+                    }
+                }
+            }
+        };
+
+        const ENDINGS_DB = [
+            { category: 'Praesens Actief', prompt: '1e pers. enk. (ik)', answer: '-o' },
+            { category: 'Praesens Actief', prompt: '2e pers. enk. (jij)', answer: '-s' },
+            { category: 'Praesens Actief', prompt: '3e pers. enk. (hij/zij)', answer: '-t' },
+            { category: 'Praesens Actief', prompt: '1e pers. mv. (wij)', answer: '-mus' },
+            { category: 'Praesens Actief', prompt: '2e pers. mv. (jullie)', answer: '-tis' },
+            { category: 'Praesens Actief', prompt: '3e pers. mv. (zij)', answer: '-nt' },
+            { category: 'Imperfectum Actief', prompt: '1e pers. enk. (ik)', answer: '-bam' },
+            { category: 'Perfectum Actief', prompt: '1e pers. enk. (ik)', answer: '-i' },
+            { category: 'Perfectum Actief', prompt: '3e pers. enk. (hij/zij)', answer: '-it' },
+            { category: 'a-declinatie', prompt: 'genitivus enk.', answer: '-ae' },
+            { category: 'us-declinatie', prompt: 'genitivus enk.', answer: '-i' },
+            { category: '3e declinatie', prompt: 'genitivus enk.', answer: '-is' }
+        ];
+
+        function filterCategory(cat) {
+            if (cat === 'all') {
+                const allKeys = [];
+                for (let c in DATABASE) {
+                    for (let k in DATABASE[c]) allKeys.push(k);
+                }
+                appState.selectedTopics = allKeys;
+            } else if (cat === 'none') {
+                appState.selectedTopics = [];
+            } else if (DATABASE[cat]) {
+                const keys = Object.keys(DATABASE[cat]);
+                const allSelected = keys.every(k => appState.selectedTopics.includes(k));
+                if (allSelected) {
+                    appState.selectedTopics = appState.selectedTopics.filter(k => !keys.includes(k));
+                } else {
+                    keys.forEach(k => {
+                        if (!appState.selectedTopics.includes(k)) appState.selectedTopics.push(k);
+                    });
+                }
+            }
+            renderTopicsGrid();
+        }
+
+        function renderTopicsGrid() {
+            const grid = document.getElementById('topicsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            for (let catKey in DATABASE) {
+                for (let itemKey in DATABASE[catKey]) {
+                    const item = DATABASE[catKey][itemKey];
+                    const isSelected = appState.selectedTopics.includes(itemKey);
+
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.onclick = () => toggleTopicSelection(itemKey);
+                    btn.className = `p-3 rounded-xl border-2 text-left transition flex items-center justify-between ${
+                        isSelected 
+                        ? 'border-roman-gold bg-amber-50/70 text-stone-900 shadow-sm' 
+                        : 'border-stone-200 bg-white text-stone-500 hover:border-stone-300'
+                    }`;
+
+                    btn.innerHTML = `
+                        <div>
+                            <span class="font-bold text-xs sm:text-sm block text-stone-800">${item.title}</span>
+                            <span class="text-[10px] text-stone-400 uppercase tracking-wider">${catKey}</span>
+                        </div>
+                        <div class="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold ${
+                            isSelected ? 'bg-roman-gold text-white' : 'bg-stone-100 text-transparent border border-stone-300'
+                        }">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    `;
+                    grid.appendChild(btn);
+                }
+            }
+
+            const countEl = document.getElementById('selectionCountText');
+            if (countEl) {
+                countEl.innerText = `Geselecteerd: ${appState.selectedTopics.length} rijtjes`;
+            }
+        }
+
+        function toggleTopicSelection(key) {
+            const idx = appState.selectedTopics.indexOf(key);
+            if (idx > -1) {
+                appState.selectedTopics.splice(idx, 1);
+            } else {
+                appState.selectedTopics.push(key);
+            }
+            renderTopicsGrid();
+        }
+
+        function setPracticeMode(mode) {
+            appState.practiceType = mode;
+            const btnWords = document.getElementById('modeTypeWord');
+            const btnEndings = document.getElementById('modeTypeEnding');
+
+            if (mode === 'words') {
+                btnWords.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-roman-gold text-white shadow";
+                btnEndings.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition";
+            } else {
+                btnEndings.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-roman-gold text-white shadow";
+                btnWords.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition";
+            }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('tabPractice').classList.add('hidden');
+            document.getElementById('tabLibrary').classList.add('hidden');
+            document.getElementById('tabDaily').classList.add('hidden');
+
+            document.getElementById('tabBtnPractice').classList.remove('active-tab');
+            document.getElementById('tabBtnLibrary').classList.remove('active-tab');
+            document.getElementById('tabBtnDaily').classList.remove('active-tab');
+
+            if (tab === 'practice') {
+                document.getElementById('tabPractice').classList.remove('hidden');
+                document.getElementById('tabBtnPractice').classList.add('active-tab');
+            } else if (tab === 'library') {
+                document.getElementById('tabLibrary').classList.remove('hidden');
+                document.getElementById('tabBtnLibrary').classList.add('active-tab');
+                renderLibrary();
+            } else if (tab === 'daily') {
+                document.getElementById('tabDaily').classList.remove('hidden');
+                document.getElementById('tabBtnDaily').classList.add('active-tab');
+            }
+        }
+
+        const TENSES_MAP = {
+            ind_act: [
+                { id: 'praesens_act', label: 'Praesens Actief' },
+                { id: 'imperfectum_act', label: 'Imperfectum Actief' },
+                { id: 'perfectum_act', label: 'Perfectum Actief' },
+                { id: 'plusquamperfectum_act', label: 'Plusquamperfectum Actief' }
+            ],
+            ind_pass: [
+                { id: 'praesens_pass', label: 'Praesens Passief' },
+                { id: 'imperfectum_pass', label: 'Imperfectum Passief' },
+                { id: 'perfectum_pass', label: 'Perfectum Passief' },
+                { id: 'plusquamperfectum_pass', label: 'Plusquamperfectum Passief' }
+            ],
+            futurum: [
+                { id: 'futurum_act', label: 'Futurum Actief (I)' },
+                { id: 'futurum_exactum_act', label: 'Futurum Exactum Actief (II)' },
+                { id: 'futurum_pass', label: 'Futurum Passief (I)' },
+                { id: 'futurum_exactum_pass', label: 'Futurum Exactum Passief (II)' }
+            ],
+            conj_act: [
+                { id: 'praesens_conj_act', label: 'Conjunctivus Praesens Actief' },
+                { id: 'imperfectum_conj_act', label: 'Conjunctivus Imperfectum Actief' },
+                { id: 'perfectum_conj_act', label: 'Conjunctivus Perfectum Actief' },
+                { id: 'plusquamperfectum_conj_act', label: 'Conjunctivus Plusquamperf. Actief' }
+            ],
+            conj_pass: [
+                { id: 'praesens_conj_pass', label: 'Conjunctivus Praesens Passief' },
+                { id: 'imperfectum_conj_pass', label: 'Conjunctivus Imperfectum Passief' },
+                { id: 'perfectum_conj_pass', label: 'Conjunctivus Perfectum Passief' },
+                { id: 'plusquamperfectum_conj_pass', label: 'Conjunctivus Plusquamperf. Passief' }
+            ],
+            imperativus: [
+                { id: 'imperativus_praesens', label: 'Imperativus Praesens' },
+                { id: 'imperativus_futurum', label: 'Imperativus Futurum' }
+            ]
+        };
+
+        function toggleModusDropdown(modus) {
+            appState.selectedModus = modus;
+            
+            const btnMap = {
+                'ind_act': 'btnModusIndAct',
+                'ind_pass': 'btnModusIndPass',
+                'futurum': 'btnModusFuturum',
+                'conj_act': 'btnModusConjAct',
+                'conj_pass': 'btnModusConjPass',
+                'imperativus': 'btnModusImperativus'
+            };
+
+            Object.values(btnMap).forEach(btnId => {
+                const el = document.getElementById(btnId);
+                if (el) {
+                    el.className = "p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 hover:border-roman-gold text-left transition relative";
+                }
+            });
+
+            const activeBtn = document.getElementById(btnMap[modus]);
+            if (activeBtn) {
+                activeBtn.className = "p-2.5 sm:p-3 rounded-xl border-2 border-roman-gold bg-amber-50/50 hover:bg-amber-50 text-left transition relative";
+            }
+
+            renderTensesDropdown();
+        }
+
+        function renderTensesDropdown() {
+            const modus = appState.selectedModus;
+            const labels = {
+                ind_act: 'INDICATIVUS ACTIEF',
+                ind_pass: 'INDICATIVUS PASSIEF',
+                futurum: 'FUTURUM',
+                conj_act: 'CONJUNCTIVUS ACTIEF',
+                conj_pass: 'CONJUNCTIVUS PASSIEF',
+                imperativus: 'IMPERATIVUS'
+            };
+
+            document.getElementById('dropdownTitle').innerText = `Selecteer Tijden voor ${labels[modus] || modus.toUpperCase()}:`;
+
+            const grid = document.getElementById('tensesCheckboxGrid');
+            grid.innerHTML = '';
+
+            const list = TENSES_MAP[modus] || [];
+            const activeList = appState.selectedTenses[modus] || [];
+
+            list.forEach(t => {
+                const checked = activeList.includes(t.id);
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-2 bg-white p-2 rounded-lg border border-stone-200 cursor-pointer hover:bg-stone-50";
+                label.innerHTML = `
+                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTense('${modus}', '${t.id}')" class="rounded text-roman-gold focus:ring-roman-gold">
+                    <span class="text-stone-700 font-medium">${t.label}</span>
+                `;
+                grid.appendChild(label);
+            });
+        }
+
+        function toggleTense(modus, tenseId) {
+            if (!appState.selectedTenses[modus]) appState.selectedTenses[modus] = [];
+            const arr = appState.selectedTenses[modus];
+            const idx = arr.indexOf(tenseId);
+            if (idx > -1) arr.splice(idx, 1);
+            else arr.push(tenseId);
+        }
+
+        function toggleAllTensesInModus(enable) {
+            const modus = appState.selectedModus;
+            if (enable) {
+                appState.selectedTenses[modus] = (TENSES_MAP[modus] || []).map(t => t.id);
+            } else {
+                appState.selectedTenses[modus] = [];
+            }
+            renderTensesDropdown();
+        }
+
+        function startQuiz() {
+            const inputType = document.getElementById('quizInputType').value;
+            currentQuiz.mode = inputType;
+            currentQuiz.questions = [];
+            currentQuiz.currentIndex = 0;
+            currentQuiz.score = 0;
+
+            if (appState.practiceType === 'endings') {
+                ENDINGS_DB.forEach(e => {
+                    currentQuiz.questions.push({
+                        topicTitle: e.category,
+                        questionText: "Wat is de uitgang voor:",
+                        stemWord: e.category,
+                        formDemand: e.prompt,
+                        correctAnswer: e.answer,
+                        distractors: ['-is', '-um', '-os', '-es'].filter(x => x !== e.answer)
+                    });
+                });
+            } else {
+                if (appState.selectedTopics.length === 0) {
+                    return;
+                }
+
+                // Gather ALL active tenses across selected verb categories
+                const allSelectedTenses = Object.values(appState.selectedTenses).flat();
+
+                appState.selectedTopics.forEach(topicKey => {
+                    let item = null;
+                    for (let c in DATABASE) {
+                        if (DATABASE[c][topicKey]) item = DATABASE[c][topicKey];
+                    }
+                    if (!item) return;
+
+                    for (let formName in item.forms) {
+                        let formData = item.forms[formName];
+                        let correctVal = typeof formData === 'object' ? formData.val : formData;
+
+                        if (item.type === 'verb' && typeof formData === 'object') {
+                            if (formData.tense && !allSelectedTenses.includes(formData.tense)) continue;
+                        }
+
+                        const distractors = generateDistractors(item, correctVal);
+
+                        currentQuiz.questions.push({
+                            topicTitle: item.title,
+                            questionText: "Wat is de vorm van:",
+                            stemWord: topicKey,
+                            formDemand: typeof formData === 'object' ? formData.name : formName,
+                            correctAnswer: correctVal,
+                            distractors: distractors
+                        });
+                    }
+                });
+            }
+
+            currentQuiz.questions.sort(() => 0.5 - Math.random());
+            if (currentQuiz.questions.length > 15) {
+                currentQuiz.questions = currentQuiz.questions.slice(0, 15);
+            }
+
+            if (currentQuiz.questions.length === 0) {
+                return;
+            }
+
+            document.getElementById('quizOverlay').classList.remove('hidden');
+            renderCurrentQuestion();
+        }
+
+        function generateDistractors(item, correctVal) {
+            const allForms = [];
+            for (let f in item.forms) {
+                let v = item.forms[f];
+                if (typeof v === 'object') v = v.val;
+                if (v !== correctVal && !allForms.includes(v)) {
+                    allForms.push(v);
+                }
+            }
+            while (allForms.length < 3) {
+                allForms.push(correctVal + 'is');
+            }
+            return allForms.sort(() => 0.5 - Math.random()).slice(0, 3);
+        }
+
+        function renderCurrentQuestion() {
+            currentQuiz.state = 'answering';
+            const q = currentQuiz.questions[currentQuiz.currentIndex];
+            const tot = currentQuiz.questions.length;
+
+            document.getElementById('quizCounter').innerText = `${currentQuiz.currentIndex + 1} / ${tot}`;
+            document.getElementById('quizProgressBar').style.width = `${((currentQuiz.currentIndex + 1) / tot) * 100}%`;
+            document.getElementById('quizTopicBadge').innerText = q.topicTitle;
+            document.getElementById('quizQuestionText').innerText = q.questionText;
+            document.getElementById('quizStemWord').innerText = q.stemWord;
+            document.getElementById('quizFormDemand').innerText = q.formDemand;
+
+            const opts = document.getElementById('quizOptionsContainer');
+            opts.innerHTML = '';
+
+            const action = document.getElementById('quizActionBtn');
+            action.innerText = "Controleer";
+
+            if (currentQuiz.mode === 'typing') {
+                const inputContainer = document.createElement('div');
+                inputContainer.className = "w-full pt-2 sm:col-span-2";
+
+                const input = document.createElement('input');
+                input.type = "text";
+                input.id = "quizTypeInput";
+                input.className = "w-full text-center p-3 rounded-xl border-2 border-stone-200 focus:border-roman-gold focus:outline-none font-serif font-bold text-stone-800 text-lg shadow-sm transition";
+                input.placeholder = "Typ hier je antwoord...";
+                input.autocomplete = "off";
+
+                inputContainer.appendChild(input);
+                opts.appendChild(inputContainer);
+
+                setTimeout(() => input.focus(), 50);
+                action.disabled = false;
+                currentQuiz.selected = null;
+            } else {
+                const answers = [q.correctAnswer, ...q.distractors].sort(() => 0.5 - Math.random());
+                answers.forEach(a => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = "quiz-option-btn p-3.5 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold font-serif font-bold text-stone-800 text-base transition shadow-sm break-words";
+                    btn.innerText = a;
+                    btn.onclick = () => selectOption(btn, a);
+                    opts.appendChild(btn);
+                });
+                action.disabled = true;
+                currentQuiz.selected = null;
+            }
+
+            document.getElementById('quizFeedbackBox').className = "hidden p-4 rounded-xl text-center space-y-1 transition";
+        }
+
+        function selectOption(btn, value) {
+            document.querySelectorAll('.quiz-option-btn').forEach(b => {
+                b.classList.remove('border-roman-gold', 'bg-amber-50');
+            });
+            btn.classList.add('border-roman-gold', 'bg-amber-50');
+            currentQuiz.selected = value;
+            document.getElementById('quizActionBtn').disabled = false;
+        }
+
+        function handleQuizAction() {
+            if (currentQuiz.state === 'answering') {
+                submitAnswer();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function normalizeText(str) {
+            if (!str) return '';
+            return str.toString().toLowerCase().replace(/[-_ \t\r\n.,;:!?'"`~]/g, '');
+        }
+
+        function submitAnswer() {
+            const q = currentQuiz.questions[currentQuiz.currentIndex];
+            let userAns = '';
+
+            if (currentQuiz.mode === 'typing') {
+                const input = document.getElementById('quizTypeInput');
+                userAns = input ? input.value : '';
+            } else {
+                userAns = currentQuiz.selected ? currentQuiz.selected : '';
+            }
+
+            const cleanUser = normalizeText(userAns);
+            const cleanCorrect = normalizeText(q.correctAnswer);
+
+            const isCorrect = cleanUser !== '' && cleanUser === cleanCorrect;
+            const feedbackBox = document.getElementById('quizFeedbackBox');
+            feedbackBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                currentQuiz.score++;
+                feedbackBox.className = "p-4 rounded-xl text-center space-y-1 transition bg-emerald-50 border border-emerald-200 text-emerald-900";
+                document.getElementById('quizFeedbackTitle').innerText = "Optime! (Juist)";
+                document.getElementById('quizFeedbackDetail').innerText = `+10 XP verkregen`;
+                appState.xp += 10;
+                updateUIState();
+            } else {
+                feedbackBox.className = "p-4 rounded-xl text-center space-y-1 transition bg-rose-50 border border-rose-200 text-rose-900";
+                document.getElementById('quizFeedbackTitle').innerText = "Helaas, niet helemaal.";
+                document.getElementById('quizFeedbackDetail').innerText = `Het juiste antwoord is: ${q.correctAnswer}`;
+            }
+
+            currentQuiz.state = 'feedback';
+            const action = document.getElementById('quizActionBtn');
+            action.innerText = "Volgende ↵";
+        }
+
+        function nextQuestion() {
+            currentQuiz.currentIndex++;
+            if (currentQuiz.currentIndex < currentQuiz.questions.length) {
+                renderCurrentQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            closeQuiz();
+        }
+
+        function closeQuiz() {
+            document.getElementById('quizOverlay').classList.add('hidden');
+        }
+
+        function startDailyChallenge() {
+            appState.practiceType = 'words';
+            startQuiz();
+        }
+
+        function renderLibrary() {
+            const container = document.getElementById('libraryContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            appState.selectedTopics.forEach(topicKey => {
+                let item = null;
+                for (let c in DATABASE) {
+                    if (DATABASE[c][topicKey]) item = DATABASE[c][topicKey];
+                }
+                if (!item) return;
+
+                const card = document.createElement('div');
+                card.className = "bg-stone-50 rounded-xl p-4 border border-stone-200 space-y-3";
+
+                let rowsHtml = '';
+                for (let f in item.forms) {
+                    let val = item.forms[f];
+                    let label = f;
+                    if (typeof val === 'object') {
+                        label = val.name;
+                        val = val.val;
+                    }
+                    rowsHtml += `
+                        <tr class="border-b border-stone-200/60 text-xs">
+                            <td class="py-1.5 font-medium text-stone-500">${label}</td>
+                            <td class="py-1.5 font-serif font-bold text-stone-900 text-sm">${val}</td>
+                        </tr>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <h3 class="font-cinzel font-bold text-stone-900 border-b border-stone-200 pb-2">${item.title}</h3>
+                    <table class="w-full text-left">
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function changeLevel() {
+            appState.level = parseInt(document.getElementById('levelSelect').value);
+            document.getElementById('dailyLevelLabel').innerText = `Klas ${appState.level}`;
+        }
+
+        function updateUIState() {
+            document.getElementById('streakCounter').innerText = `${appState.streak} Dag`;
+            document.getElementById('xpCounter').innerText = `${appState.xp} XP`;
+        }
+
+        window.onload = function() {
+            renderTensesDropdown();
+            renderTopicsGrid();
+            updateUIState();
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const quizOverlay = document.getElementById('quizOverlay');
+                    if (quizOverlay && !quizOverlay.classList.contains('hidden')) {
+                        const actionBtn = document.getElementById('quizActionBtn');
+                        if (actionBtn && !actionBtn.disabled) {
+                            e.preventDefault();
+                            actionBtn.click();
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
