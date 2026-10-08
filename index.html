@@ -1,1965 +1,1684 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schola Latina - Latijnse Grammatica & Rijtjes Trainer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        roman: {
-                            gold: '#C5A059',
-                            goldLight: '#F7F2E7',
-                            goldDark: '#99742B',
-                            red: '#800020',
-                            redLight: '#FDF2F4',
-                            marble: '#FBF9F5',
-                            stone: '#2D2825',
-                            purple: '#4A154B',
-                            purpleLight: '#F8F0F8'
-                        }
-                    },
-                    fontFamily: {
-                        cinzel: ['Cinzel', 'serif'],
-                        serif: ['Cormorant Garamond', 'serif'],
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schola Latina Trainer - Latijnse Grammatica & Rijtjes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        roman: {
+          gold: '#C5A059',
+          goldLight: '#F7F2E7',
+          goldDark: '#99742B',
+          red: '#800020',
+          redLight: '#FDF2F4',
+          marble: '#FBF9F5',
+          stone: '#2D2825',
+          purple: '#4A154B',
+          purpleLight: '#F8F0F8'
         }
-    </script>
-    <style>
-        :root {
-            --bg-pattern: radial-gradient(#e5decf 1px, transparent 1px);
-            --primary-accent: #C5A059;
-            --primary-dark: #800020;
-        }
+      },
+      fontFamily: {
+        cinzel: ['Cinzel', 'serif'],
+        serif: ['Cormorant Garamond', 'serif'],
+        sans: ['Inter', 'sans-serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+:root {
+  --bg-pattern: radial-gradient(#e5decf 1px, transparent 1px);
+  --theme-accent-start: #D4AF37;
+  --theme-accent-mid: #C5A059;
+  --theme-accent-end: #A67C1E;
+}
+body {
+  background-color: #F8F5EE;
+  background-image: var(--bg-pattern);
+  background-size: 24px 24px;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-        body {
-            background-color: #F8F5EE;
-            background-image: var(--bg-pattern);
-            background-size: 24px 24px;
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease;
-        }
+/* Theme classes */
+body.theme-purple {
+  background-color: #F3E8FF;
+  --theme-accent-start: #C084FC;
+  --theme-accent-mid: #9333EA;
+  --theme-accent-end: #581C87;
+}
+body.theme-purple .roman-card {
+  border-color: #E9D5FF;
+  box-shadow: 0 4px 20px -2px rgba(147, 51, 234, 0.08);
+}
 
-        body.theme-purple {
-            background-color: #F5F0F6;
-            --primary-accent: #8E24AA;
-            --primary-dark: #4A154B;
-        }
-        body.theme-pompeii {
-            background-color: #FAF0ED;
-            --primary-accent: #D32F2F;
-            --primary-dark: #800020;
-        }
-        body.theme-laurel {
-            background-color: #F0F4F1;
-            --primary-accent: #2E7D32;
-            --primary-dark: #1B5E20;
-        }
+body.theme-pompeii {
+  background-color: #FFE4E6;
+  --theme-accent-start: #FB7185;
+  --theme-accent-mid: #E11D48;
+  --theme-accent-end: #881337;
+}
+body.theme-pompeii .roman-card {
+  border-color: #FECDD3;
+  box-shadow: 0 4px 20px -2px rgba(225, 29, 72, 0.08);
+}
 
-        .roman-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid #E5DECF;
-            box-shadow: 0 4px 20px -2px rgba(128, 0, 32, 0.05);
-        }
+body.theme-laurel {
+  background-color: #ECFDF5;
+  --theme-accent-start: #34D399;
+  --theme-accent-mid: #059669;
+  --theme-accent-end: #064E3B;
+}
+body.theme-laurel .roman-card {
+  border-color: #A7F3D0;
+  box-shadow: 0 4px 20px -2px rgba(5, 150, 105, 0.08);
+}
 
-        .gold-gradient {
-            background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #A67C1E 100%);
-        }
-        .red-gradient {
-            background: linear-gradient(135deg, #9E1B32 0%, #800020 100%);
-        }
-        .purple-gradient {
-            background: linear-gradient(135deg, #6B1F6C 0%, #4A154B 100%);
-        }
-        .laurel-gradient {
-            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
-        }
+.roman-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #E5DECF;
+  box-shadow: 0 4px 20px -2px rgba(128, 0, 32, 0.05);
+}
 
-        .btn-selected {
-            background-color: #FEF8EC !important;
-            border-color: #C5A059 !important;
-            color: #1F2937 !important;
-            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.35), 0 2px 4px rgba(0, 0, 0, 0.05) !important;
-            font-weight: 700 !important;
-        }
+.gold-gradient {
+  background: linear-gradient(135deg, var(--theme-accent-start) 0%, var(--theme-accent-mid) 50%, var(--theme-accent-end) 100%);
+}
+.red-gradient {
+  background: linear-gradient(135deg, #9E1B32 0%, #800020 100%);
+}
+.purple-gradient {
+  background: linear-gradient(135deg, #9333EA 0%, #581C87 100%);
+}
+.laurel-gradient {
+  background: linear-gradient(135deg, #10B981 0%, #064E3B 100%);
+}
 
-        .quiz-option-btn {
-            transition: all 0.15s ease-in-out;
-        }
-        .quiz-option-btn:hover {
-            border-color: #C5A059;
-            background-color: #FFFDF9;
-            transform: translateY(-1px);
-        }
+.btn-selected {
+  background-color: #FEF8EC !important;
+  border-color: #C5A059 !important;
+  color: #1F2937 !important;
+  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.35), 0 2px 4px rgba(0,0,0,0.05) !important;
+  font-weight: 700 !important;
+}
 
-        .active-tab {
-            border-bottom: 3px solid #800020;
-            color: #800020;
-            background-color: #FDF7ED;
-            font-weight: 700;
-        }
+.quiz-option-btn {
+  transition: all 0.15s ease-in-out;
+}
+.quiz-option-btn:hover {
+  border-color: #C5A059;
+  background-color: #FFFDF9;
+  transform: translateY(-1px);
+}
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-        .animate-shake {
-            animation: shake 0.4s ease-in-out;
-        }
+.active-tab {
+  border-bottom: 3px solid #800020;
+  color: #800020;
+  background-color: #FDF7ED;
+  font-weight: 700;
+}
 
-        @keyframes pulse-success {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-        .animate-success {
-            animation: pulse-success 0.3s ease-in-out;
-        }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
 
-        #confettiCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 100;
-        }
+#confettiCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+}
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #F1ECE1; }
-        ::-webkit-scrollbar-thumb { background: #C5A059; border-radius: 3px; }
-    </style>
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #F1ECE1; }
+::-webkit-scrollbar-thumb { background: #C5A059; border-radius: 3px; }
+</style>
 </head>
 <body class="text-stone-800 min-h-screen flex flex-col justify-between selection:bg-roman-goldLight">
 
-    <canvas id="confettiCanvas"></canvas>
+<canvas id="confettiCanvas"></canvas>
 
-    <header class="bg-white/95 backdrop-blur border-b border-stone-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            
-            <!-- Logo & Title -->
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center text-white text-xl font-bold shadow-md">
-                    <i class="fa-solid fa-landmark"></i>
-                </div>
-                <div>
-                    <h1 class="font-cinzel text-lg sm:text-xl font-black text-stone-900 tracking-wider">SCHOLA LATINA</h1>
-                    <p class="text-[10px] sm:text-[11px] text-roman-goldDark font-bold uppercase tracking-widest">Grammatica & Rijtjes Trainer</p>
-                </div>
-            </div>
-
-            <!-- Stats Bar & Level Selector -->
-            <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs">
-                <div class="flex items-center space-x-1.5 bg-stone-900 text-amber-300 px-3 py-1.5 rounded-full shadow-sm font-bold border border-amber-500/30">
-                    <i id="rankIcon" class="fa-solid fa-shield-halved text-amber-400"></i>
-                    <span id="rankTitle">Tiro</span>
-                </div>
-
-                <div class="flex items-center space-x-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full shadow-sm">
-                    <i class="fa-solid fa-fire text-amber-500 animate-pulse"></i>
-                    <span id="streakCounter" class="font-bold text-amber-900">1 Dag</span>
-                </div>
-
-                <div class="flex items-center space-x-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full shadow-sm">
-                    <i class="fa-solid fa-gem text-emerald-600"></i>
-                    <span id="xpCounter" class="font-bold text-emerald-900">0 XP</span>
-                </div>
-
-                <button onclick="toggleAudio()" id="audioBtn" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-300 flex items-center justify-center text-stone-600 transition" title="Geluid aan/uit">
-                    <i class="fa-solid fa-volume-high"></i>
-                </button>
-
-                <div class="flex items-center space-x-1 bg-stone-100 border border-stone-300 px-2.5 py-1 rounded-full">
-                    <i class="fa-solid fa-graduation-cap text-roman-gold"></i>
-                    <select id="levelSelect" onchange="changeLevel()" class="bg-transparent text-xs font-bold text-stone-800 outline-none cursor-pointer">
-                        <option value="1">Klas 1 (Basis)</option>
-                        <option value="2" selected>Klas 2 (Midden)</option>
-                        <option value="3">Klas 3+ (Gevorderd)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-full bg-stone-200 h-1.5 relative overflow-hidden">
-            <div id="rankProgressBar" class="gold-gradient h-full transition-all duration-500" style="width: 0%"></div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <div class="max-w-5xl mx-auto px-4 flex space-x-2 sm:space-x-4 text-xs sm:text-sm font-medium text-stone-500 border-t border-stone-100 pt-1 overflow-x-auto">
-            <button id="tabBtnPractice" onclick="switchTab('practice')" class="py-2.5 px-3 rounded-t-lg active-tab transition flex items-center space-x-2">
-                <i class="fa-solid fa-pen-ruler"></i>
-                <span>Oefenen</span>
-            </button>
-            <button id="tabBtnLibrary" onclick="switchTab('library')" class="py-2.5 px-3 rounded-t-lg transition flex items-center space-x-2 hover:text-roman-red">
-                <i class="fa-solid fa-book-bookmark"></i>
-                <span>Grammatica Overzicht</span>
-            </button>
-            <button id="tabBtnDaily" onclick="switchTab('daily')" class="py-2.5 px-3 rounded-t-lg transition flex items-center space-x-2 hover:text-roman-red">
-                <i class="fa-solid fa-calendar-check text-amber-500"></i>
-                <span>Dagelijkse Challenge</span>
-            </button>
-            <button id="tabBtnRewards" onclick="switchTab('rewards')" class="py-2.5 px-3 rounded-t-lg transition flex items-center space-x-2 hover:text-roman-red">
-                <i class="fa-solid fa-award text-purple-600"></i>
-                <span>Beloningen & Thema's</span>
-            </button>
-        </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
-
-        <!-- TAB 1: OEFENEN -->
-        <div id="tabPractice" class="space-y-6">
-
-            <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white rounded-2xl p-5 shadow-lg border border-stone-700 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="space-y-1 text-center md:text-left">
-                    <span class="inline-block px-2.5 py-0.5 rounded-md bg-roman-gold/20 text-roman-goldLight text-xs font-semibold uppercase tracking-wider">Oefenmodus & Invoer</span>
-                    <h2 class="font-cinzel text-xl font-bold text-amber-100">Kies Hoe Je Wilt Oefenen</h2>
-                    <p class="text-xs text-stone-300">Oefen op basis van je gekozen klasniveau (<span id="activeLevelBadge" class="font-bold text-amber-300">Klas 2</span>).</p>
-                </div>
-                <div class="flex flex-wrap items-center justify-center gap-3">
-                    <div class="bg-stone-800 p-1 rounded-xl border border-stone-700 flex">
-                        <button id="modeTypeWord" onclick="setPracticeMode('words')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition btn-selected">
-                            <i class="fa-solid fa-spell-check mr-1"></i> Woorden
-                        </button>
-                        <button id="modeTypeEnding" onclick="setPracticeMode('endings')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition">
-                            <i class="fa-solid fa-layer-group mr-1"></i> Losse Uitgangen
-                        </button>
-                    </div>
-
-                    <div class="bg-stone-800 p-1 rounded-xl border border-stone-700 flex items-center space-x-2 px-3 py-1">
-                        <span class="text-xs text-stone-400 font-medium">Invoer:</span>
-                        <select id="quizInputType" class="bg-stone-900 text-amber-200 text-xs font-bold rounded-lg px-2 py-1 border border-stone-600 outline-none cursor-pointer">
-                            <option value="mc">Meerkeuze</option>
-                            <option value="typing">Zelf Typen</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODUS & TIJDEN FILTER -->
-            <div class="roman-card rounded-2xl p-5 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-sliders text-roman-gold text-lg"></i>
-                        <h3 class="font-cinzel text-base font-bold text-stone-900">Werkwoordtijden Filter</h3>
-                    </div>
-                    
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs text-stone-500 font-medium mr-1">Alle Werkwoordtijden:</span>
-                        <button onclick="masterToggleAllTenses(true)" class="px-3 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold transition shadow-sm flex items-center space-x-1">
-                            <i class="fa-solid fa-circle-check text-amber-600"></i>
-                            <span>Alles Aan</span>
-                        </button>
-                        <button onclick="masterToggleAllTenses(false)" class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 rounded-lg text-xs font-bold transition shadow-sm flex items-center space-x-1">
-                            <i class="fa-solid fa-circle-xmark text-stone-500"></i>
-                            <span>Alles Uit</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                    <button id="btnModusIndAct" onclick="toggleModusDropdown('ind_act')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative">
-                        <div class="flex items-center justify-between">
-                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Ind. Actief</span>
-                            <i id="arrowIndAct" class="fa-solid fa-chevron-down text-stone-400 text-xs"></i>
-                        </div>
-                        <span id="badgeIndAct" class="text-[10px] text-stone-500 block mt-0.5">0 gekozen</span>
-                    </button>
-
-                    <button id="btnModusIndPass" onclick="toggleModusDropdown('ind_pass')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative">
-                        <div class="flex items-center justify-between">
-                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Ind. Passief</span>
-                            <i id="arrowIndPass" class="fa-solid fa-chevron-down text-stone-400 text-xs"></i>
-                        </div>
-                        <span id="badgeIndPass" class="text-[10px] text-stone-500 block mt-0.5">0 gekozen</span>
-                    </button>
-
-                    <button id="btnModusFuturum" onclick="toggleModusDropdown('futurum')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative">
-                        <div class="flex items-center justify-between">
-                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Futurum</span>
-                            <i id="arrowFuturum" class="fa-solid fa-chevron-down text-stone-400 text-xs"></i>
-                        </div>
-                        <span id="badgeFuturum" class="text-[10px] text-stone-500 block mt-0.5">0 gekozen</span>
-                    </button>
-
-                    <button id="btnModusConjAct" onclick="toggleModusDropdown('conj_act')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative">
-                        <div class="flex items-center justify-between">
-                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Conj. Actief</span>
-                            <i id="arrowConjAct" class="fa-solid fa-chevron-down text-stone-400 text-xs"></i>
-                        </div>
-                        <span id="badgeConjAct" class="text-[10px] text-stone-500 block mt-0.5">0 gekozen</span>
-                    </button>
-
-                    <button id="btnModusConjPass" onclick="toggleModusDropdown('conj_pass')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative">
-                        <div class="flex items-center justify-between">
-                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Conj. Passief</span>
-                            <i id="arrowConjPass" class="fa-solid fa-chevron-down text-stone-400 text-xs"></i>
-                        </div>
-                        <span id="badgeConjPass" class="text-[10px] text-stone-500 block mt-0.5">0 gekozen</span>
-                    </button>
-
-                    <button id="btnModusIrregular" onclick="toggleModusDropdown('irregular')" class="p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative">
-                        <div class="flex items-center justify-between">
-                            <span class="font-cinzel font-bold text-stone-900 text-xs sm:text-sm">Onregelmatig</span>
-                            <i id="arrowIrregular" class="fa-solid fa-chevron-down text-stone-400 text-xs"></i>
-                        </div>
-                        <span id="badgeIrregular" class="text-[10px] text-stone-500 block mt-0.5">0 gekozen</span>
-                    </button>
-                </div>
-
-                <div id="modusDropdownPanel" class="bg-amber-50/50 rounded-xl p-4 border border-amber-200 space-y-3">
-                    <div class="flex items-center justify-between text-xs border-b border-amber-200 pb-2">
-                        <span id="dropdownTitle" class="font-bold text-roman-goldDark uppercase tracking-wider">Selecteer Tijden voor INDICATIVUS ACTIEF:</span>
-                        <div class="space-x-2">
-                            <button onclick="toggleAllTensesInModus(true)" class="text-roman-goldDark hover:underline font-bold bg-white px-2 py-0.5 rounded border border-amber-300">Deze Modus Aan</button>
-                            <span class="text-stone-300">|</span>
-                            <button onclick="toggleAllTensesInModus(false)" class="text-stone-600 hover:underline font-semibold bg-white px-2 py-0.5 rounded border border-stone-300">Deze Modus Uit</button>
-                        </div>
-                    </div>
-                    
-                    <div id="tensesCheckboxGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs"></div>
-                </div>
-            </div>
-
-            <!-- WORD CATEGORIES & TOPICS GRID -->
-            <div class="roman-card rounded-2xl p-5 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-layer-group text-roman-red text-lg"></i>
-                        <h3 class="font-cinzel text-base font-bold text-stone-900">Kies Woorden & Grammatica</h3>
-                    </div>
-                    
-                    <div class="flex flex-wrap gap-1.5 text-xs">
-                        <button id="catBtnAll" onclick="filterCategory('all')" class="px-2.5 py-1 bg-stone-100 text-stone-800 border border-stone-300 font-semibold rounded-lg transition hover:bg-stone-200">Alles Aan</button>
-                        <button id="catBtnNone" onclick="filterCategory('none')" class="px-2.5 py-1 bg-stone-100 text-stone-800 border border-stone-300 font-semibold rounded-lg transition hover:bg-stone-200">Alles Uit</button>
-                        <button id="catBtnNoun" onclick="filterCategory('noun')" class="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 font-semibold rounded-lg transition hover:bg-amber-100">Zelfst. Nw</button>
-                        <button id="catBtnVerb" onclick="filterCategory('verb')" class="px-2.5 py-1 bg-red-50 text-red-900 border border-red-200 font-semibold rounded-lg transition hover:bg-red-100">Werkwoorden</button>
-                        <button id="catBtnAdj" onclick="filterCategory('adj')" class="px-2.5 py-1 bg-blue-50 text-blue-900 border border-blue-200 font-semibold rounded-lg transition hover:bg-blue-100">Bijvoegl. Nw</button>
-                        <button id="catBtnPronoun" onclick="filterCategory('pronoun')" class="px-2.5 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 font-semibold rounded-lg transition hover:bg-emerald-100">Voornaamwoorden</button>
-                    </div>
-                </div>
-
-                <div id="topicsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
-            </div>
-
-            <div id="noticeBox" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-semibold text-center shadow-sm"></div>
-
-            <div class="pt-2 text-center">
-                <button id="startQuizBtn" onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 gold-gradient text-white font-cinzel text-lg font-bold rounded-2xl shadow-xl hover:opacity-95 transform hover:-translate-y-0.5 active:translate-y-0 transition flex items-center justify-center space-x-3 mx-auto">
-                    <i class="fa-solid fa-play"></i>
-                    <span>Start Oefening</span>
-                </button>
-                <p id="selectionCountText" class="text-xs text-stone-500 mt-2">Geselecteerd: 0 rijtjes</p>
-            </div>
-
-        </div>
-
-        <!-- TAB 2: LIBRARY (GRAMMATICA OVERZICHT MET UITVOUWENDE KNOPPEN) -->
-        <div id="tabLibrary" class="hidden space-y-6">
-            <div class="roman-card rounded-2xl p-6 space-y-6">
-                
-                <!-- Header & Controls -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200 pb-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center text-white text-lg font-bold shadow">
-                            <i class="fa-solid fa-book-open"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-cinzel text-xl font-bold text-stone-900">Grammatica Overzicht</h2>
-                            <p class="text-xs text-stone-500">Klik op een knop om het gewenste rijtje of de werkwoordstijd uit te vouwen.</p>
-                        </div>
-                    </div>
-
-                    <!-- Actions & Search -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="relative flex-grow sm:flex-grow-0">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-xs"></i>
-                            <input type="text" id="librarySearchInput" oninput="filterAccordionItems()" placeholder="Zoek rijtje..." class="pl-8 pr-3 py-1.5 bg-stone-50 border border-stone-300 rounded-xl text-xs outline-none focus:border-roman-gold w-full sm:w-48">
-                        </div>
-                        <button onclick="expandAllAccordion(true)" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition">
-                            <i class="fa-solid fa-angles-down mr-1"></i> Alles Uitvouwen
-                        </button>
-                        <button onclick="expandAllAccordion(false)" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 rounded-xl text-xs font-bold transition">
-                            <i class="fa-solid fa-angles-up mr-1"></i> Alles Invouwen
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Accordion Container -->
-                <div id="accordionContainer" class="space-y-3">
-                    <!-- Dynamic Collapsible Accordion Items Injected via JS -->
-                </div>
-
-            </div>
-        </div>
-
-        <!-- TAB 3: DAILY CHALLENGE -->
-        <div id="tabDaily" class="hidden space-y-6">
-            <div class="roman-card rounded-2xl p-8 text-center space-y-6 max-w-xl mx-auto shadow-lg">
-                <div class="w-20 h-20 rounded-full bg-amber-100 border-4 border-roman-gold mx-auto flex items-center justify-center text-amber-600 text-3xl shadow-inner">
-                    <i class="fa-solid fa-crown"></i>
-                </div>
-                <div class="space-y-2">
-                    <h2 class="font-cinzel text-2xl font-bold text-stone-900">Dagelijkse Romeinse Uitdaging</h2>
-                    <p class="text-sm text-stone-600">Beantwoord exact 5 vragen op niveau <span id="dailyLevelLabel" class="font-bold text-roman-red">Klas 2</span> voor je streak en <span class="font-bold text-emerald-600">+50 XP</span>!</p>
-                </div>
-                
-                <div id="dailyChallengeStatusBox" class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-left text-xs space-y-2 text-stone-700">
-                    <div class="flex items-center space-x-2 font-bold text-amber-900">
-                        <i class="fa-solid fa-calendar-day text-amber-600"></i>
-                        <span>Status voor vandaag (<span id="dailyDateText">--</span>):</span>
-                    </div>
-                    <p id="dailyStatusDescription" class="text-stone-600">Nog niet voltooid. Start de challenge en behoud je streak!</p>
-                </div>
-
-                <button id="dailyStartBtn" onclick="startDailyChallenge()" class="w-full py-3.5 red-gradient text-white font-cinzel font-bold text-base rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-bolt"></i>
-                    <span>Start Dagelijkse Uitdaging (5 Vragen)</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- TAB 4: REWARDS & THEMES -->
-        <div id="tabRewards" class="hidden space-y-6">
-            <div class="roman-card rounded-2xl p-6 space-y-6">
-                <div class="border-b border-stone-200 pb-4">
-                    <h2 class="font-cinzel text-xl font-bold text-stone-900">Rangen & Unieke Kleurthema's</h2>
-                    <p class="text-xs text-stone-500">Verdien XP door te oefenen om hogere Romeinse rangen en visuele thema's vrij te spelen.</p>
-                </div>
-
-                <div class="space-y-3">
-                    <h3 class="font-cinzel text-sm font-bold text-stone-800 uppercase tracking-wider">Romeinse Rangen Progressie:</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                        <div id="rankCardTiro" class="p-3 rounded-xl border-2 border-amber-500 bg-amber-50 text-center space-y-1">
-                            <i class="fa-solid fa-shield text-amber-600 text-lg"></i>
-                            <div class="font-cinzel font-bold text-xs text-stone-900">Tiro</div>
-                            <div class="text-[10px] text-stone-500">0 XP</div>
-                        </div>
-                        <div id="rankCardLegionarius" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
-                            <i class="fa-solid fa-helmet-safety text-stone-500 text-lg"></i>
-                            <div class="font-cinzel font-bold text-xs text-stone-900">Legionarius</div>
-                            <div class="text-[10px] text-stone-500">100 XP</div>
-                        </div>
-                        <div id="rankCardCenturio" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
-                            <i class="fa-solid fa-user-shield text-stone-500 text-lg"></i>
-                            <div class="font-cinzel font-bold text-xs text-stone-900">Centurio</div>
-                            <div class="text-[10px] text-stone-500">300 XP</div>
-                        </div>
-                        <div id="rankCardTribunus" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
-                            <i class="fa-solid fa-chess-knight text-stone-500 text-lg"></i>
-                            <div class="font-cinzel font-bold text-xs text-stone-900">Tribunus</div>
-                            <div class="text-[10px] text-stone-500">600 XP</div>
-                        </div>
-                        <div id="rankCardConsul" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
-                            <i class="fa-solid fa-crown text-amber-500 text-lg"></i>
-                            <div class="font-cinzel font-bold text-xs text-stone-900">Consul</div>
-                            <div class="text-[10px] text-stone-500">1000 XP</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-4 border-t border-stone-200">
-                    <h3 class="font-cinzel text-sm font-bold text-stone-800 uppercase tracking-wider">Vrij te spelen App Thema's:</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
-                            <div class="space-y-1">
-                                <div class="w-8 h-8 rounded-full gold-gradient shadow"></div>
-                                <h4 class="font-cinzel font-bold text-sm text-stone-900">Romeins Goud</h4>
-                                <p class="text-[11px] text-stone-500">Klassiek marmer & goud. Altijd beschikbaar.</p>
-                            </div>
-                            <button onclick="applyTheme('default')" id="btnThemeDefault" class="w-full py-1.5 bg-stone-800 text-white rounded-lg text-xs font-bold hover:bg-stone-700">Actief</button>
-                        </div>
-
-                        <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
-                            <div class="space-y-1">
-                                <div class="w-8 h-8 rounded-full purple-gradient shadow"></div>
-                                <h4 class="font-cinzel font-bold text-sm text-stone-900">Keizerlijk Purper</h4>
-                                <p class="text-[11px] text-stone-500">Ontgrendelt bij Legionarius (100 XP).</p>
-                            </div>
-                            <button id="btnThemePurple" onclick="applyTheme('purple')" class="w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed" disabled>Vergrendeld</button>
-                        </div>
-
-                        <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
-                            <div class="space-y-1">
-                                <div class="w-8 h-8 rounded-full red-gradient shadow"></div>
-                                <h4 class="font-cinzel font-bold text-sm text-stone-900">Pompeï Rood</h4>
-                                <p class="text-[11px] text-stone-500">Ontgrendelt bij Centurio (300 XP).</p>
-                            </div>
-                            <button id="btnThemePompeii" onclick="applyTheme('pompeii')" class="w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed" disabled>Vergrendeld</button>
-                        </div>
-
-                        <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
-                            <div class="space-y-1">
-                                <div class="w-8 h-8 rounded-full laurel-gradient shadow"></div>
-                                <h4 class="font-cinzel font-bold text-sm text-stone-900">Laurier Groen</h4>
-                                <p class="text-[11px] text-stone-500">Ontgrendelt bij Tribunus (600 XP).</p>
-                            </div>
-                            <button id="btnThemeLaurel" onclick="applyTheme('laurel')" class="w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed" disabled>Vergrendeld</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </main>
-
-    <!-- QUIZ OVERLAY MODAL -->
-    <div id="quizOverlay" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div id="quizBox" class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border-2 border-roman-gold overflow-hidden flex flex-col max-h-[92vh] transition-all">
-            
-            <div class="p-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <span id="quizCounter" class="text-xs font-bold text-stone-600 bg-stone-200 px-2.5 py-1 rounded-full">1 / 10</span>
-                    <span id="quizTopicBadge" class="text-xs font-bold text-roman-red bg-red-50 border border-red-200 px-2.5 py-1 rounded-full">filia</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button id="hintBtn" onclick="useHint()" class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold rounded-lg border border-amber-300 transition flex items-center space-x-1" title="-2 XP voor een hint">
-                        <i class="fa-solid fa-lightbulb text-amber-500"></i>
-                        <span>Hint (-2 XP)</span>
-                    </button>
-                    <button onclick="closeQuiz()" class="text-stone-400 hover:text-stone-800 text-lg w-8 h-8 rounded-full flex items-center justify-center hover:bg-stone-200 transition">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="w-full bg-stone-200 h-1.5">
-                <div id="quizProgressBar" class="gold-gradient h-1.5 transition-all duration-300" style="width: 10%"></div>
-            </div>
-
-            <div class="p-6 overflow-y-auto flex-grow space-y-5">
-                <div class="text-center space-y-2">
-                    <p id="quizQuestionText" class="text-xs text-stone-500 uppercase tracking-wider font-semibold">Wat is de vorm van:</p>
-                    <h3 id="quizStemWord" class="font-serif font-bold text-3xl sm:text-4xl text-stone-900 tracking-wide">filia</h3>
-                    <p id="quizFormDemand" class="text-base text-roman-red font-bold font-cinzel">2e nm. enk. (genitivus)</p>
-                </div>
-
-                <div id="quizHintBox" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-medium text-center shadow-inner"></div>
-
-                <div id="quizOptionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
-
-                <div id="quizFeedbackBox" class="hidden p-4 rounded-xl text-center space-y-1.5 transition">
-                    <p id="quizFeedbackTitle" class="font-bold text-base"></p>
-                    <p id="quizFeedbackDetail" class="text-xs sm:text-sm"></p>
-                    <p id="quizFeedbackExplanation" class="text-[11px] opacity-90 italic pt-1 border-t border-black/10"></p>
-                </div>
-            </div>
-
-            <div class="p-4 bg-stone-50 border-t border-stone-200 flex justify-between items-center">
-                <span class="text-[11px] text-stone-400 italic hidden sm:inline">Druk op Enter ↵ om te controleren</span>
-                <button id="quizActionBtn" onclick="handleQuizAction()" class="ml-auto px-6 py-2.5 gold-gradient text-white text-xs font-bold rounded-xl shadow hover:opacity-95 transition disabled:opacity-40">
-                    Controleer
-                </button>
-            </div>
-        </div>
+<header class="bg-white/95 backdrop-blur border-b border-stone-200 sticky top-0 z-40 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+    <!-- Logo & Title -->
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center text-white text-xl font-bold shadow-md">
+        <i class="fa-solid fa-landmark"></i>
+      </div>
+      <div>
+        <h1 class="font-cinzel text-lg sm:text-xl font-black text-stone-900 tracking-wider">SCHOLA LATINA</h1>
+        <p class="text-[10px] sm:text-[11px] text-roman-goldDark font-bold uppercase tracking-widest">Grammatica & Rijtjes Trainer</p>
+      </div>
     </div>
 
-    <footer class="border-t border-stone-200 bg-white py-4 text-center text-xs text-stone-400">
-        <p>Schola Latina &copy; 2026 — Latijnse Grammatica Didactiek voor Gymnasia en Athenaea</p>
-    </footer>
+    <!-- Stats Bar & Level Selector -->
+    <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs">
+      <div class="flex items-center space-x-1.5 bg-stone-900 px-3 py-1.5 rounded-full shadow-sm font-bold border border-amber-500/30 text-amber-300">
+        <i id="rankIcon" class="fa-solid fa-shield-halved text-amber-400"></i>
+        <span id="rankTitle">Tiro</span>
+      </div>
+      <div class="flex items-center space-x-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full shadow-sm">
+        <i class="fa-solid fa-fire text-amber-500 animate-pulse"></i>
+        <span id="streakCounter" class="font-bold text-amber-900">1 Dag</span>
+      </div>
+      <div class="flex items-center space-x-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full shadow-sm">
+        <i class="fa-solid fa-gem text-emerald-600"></i>
+        <span id="xpCounter" class="font-bold text-emerald-900">0 XP</span>
+      </div>
+      <button onclick="toggleAudio()" id="audioBtn" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-300 flex items-center justify-center text-stone-600 transition" title="Geluid aan/uit">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
+      <div class="flex items-center space-x-1 bg-stone-100 border border-stone-300 px-2.5 py-1 rounded-full">
+        <i class="fa-solid fa-graduation-cap text-roman-gold"></i>
+        <select id="levelSelect" onchange="changeLevel()" class="bg-transparent text-xs font-bold text-stone-800 outline-none cursor-pointer">
+          <option value="1">Klas 1 (Basis)</option>
+          <option value="2" selected>Klas 2 (Midden)</option>
+          <option value="3">Klas 3+ (Gevorderd)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <div class="w-full bg-stone-200 h-1.5 relative overflow-hidden">
+    <div id="rankProgressBar" class="gold-gradient h-full transition-all duration-500" style="width: 0%"></div>
+  </div>
 
-    <script>
-        let audioEnabled = true;
-        let audioCtx = null;
+  <!-- Navigation Tabs -->
+  <div class="max-w-5xl mx-auto px-4 flex space-x-2 sm:space-x-4 text-xs sm:text-sm font-medium text-stone-500 border-t border-stone-100 pt-1 overflow-x-auto">
+    <button id="tabBtnPractice" onclick="switchTab('practice')" class="py-2.5 px-3 rounded-t-lg active-tab transition flex items-center space-x-2">
+      <i class="fa-solid fa-pen-ruler"></i>
+      <span>Oefenen</span>
+    </button>
+    <button id="tabBtnLibrary" onclick="switchTab('library')" class="py-2.5 px-3 rounded-t-lg transition flex items-center space-x-2 hover:text-roman-red">
+      <i class="fa-solid fa-book-bookmark"></i>
+      <span>Grammatica Overzicht</span>
+    </button>
+    <button id="tabBtnDaily" onclick="switchTab('daily')" class="py-2.5 px-3 rounded-t-lg transition flex items-center space-x-2 hover:text-roman-red">
+      <i class="fa-solid fa-calendar-check text-amber-500"></i>
+      <span>Dagelijkse Challenge</span>
+    </button>
+    <button id="tabBtnRewards" onclick="switchTab('rewards')" class="py-2.5 px-3 rounded-t-lg transition flex items-center space-x-2 hover:text-roman-red">
+      <i class="fa-solid fa-award text-purple-600"></i>
+      <span>Beloningen & Thema's</span>
+    </button>
+  </div>
+</header>
 
-        function getAudioContext() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            return audioCtx;
+<main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+  <!-- TAB 1: OEFENEN -->
+  <div id="tabPractice" class="space-y-6">
+    <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white rounded-2xl p-5 shadow-lg border border-stone-700 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="space-y-1 text-center md:text-left">
+        <span class="inline-block px-2.5 py-0.5 rounded-md bg-roman-gold/20 text-roman-goldLight text-xs font-semibold uppercase tracking-wider">Oefenmodus & Invoer</span>
+        <h2 class="font-cinzel text-xl font-bold text-amber-100">Kies Hoe Je Wilt Oefenen</h2>
+        <p class="text-xs text-stone-300">Oefen op basis van je gekozen klasniveau (<span id="activeLevelBadge" class="font-bold text-amber-300">Klas 2</span>).</p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <div class="bg-stone-800 p-1 rounded-xl border border-stone-700 flex">
+          <button id="modeTypeWord" onclick="setPracticeMode('words')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition btn-selected">
+            <i class="fa-solid fa-spell-check mr-1"></i> Woorden
+          </button>
+          <button id="modeTypeEnding" onclick="setPracticeMode('endings')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition">
+            <i class="fa-solid fa-layer-group mr-1"></i> Losse Uitgangen
+          </button>
+        </div>
+        <div class="bg-stone-800 p-1 rounded-xl border border-stone-700 flex items-center space-x-2 px-3 py-1">
+          <span class="text-xs text-stone-400 font-medium">Invoer:</span>
+          <select id="quizInputType" class="bg-stone-900 text-amber-200 text-xs font-bold rounded-lg px-2 py-1 border border-stone-600 outline-none cursor-pointer">
+            <option value="mc">Meerkeuze</option>
+            <option value="typing">Zelf Typen</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORD CATEGORIES & TOPICS GRID -->
+    <div class="roman-card rounded-2xl p-5 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-layer-group text-roman-red text-lg"></i>
+          <h3 class="font-cinzel text-base font-bold text-stone-900">Kies Woorden & Grammatica</h3>
+        </div>
+        <div class="flex flex-wrap gap-1.5 text-xs">
+          <button id="catBtnAll" onclick="filterCategory('all')" class="px-2.5 py-1 bg-stone-100 text-stone-800 border border-stone-300 font-semibold rounded-lg transition hover:bg-stone-200">Alles Aan</button>
+          <button id="catBtnNone" onclick="filterCategory('none')" class="px-2.5 py-1 bg-stone-100 text-stone-800 border border-stone-300 font-semibold rounded-lg transition hover:bg-stone-200">Alles Uit</button>
+          <button id="catBtnNoun" onclick="filterCategory('noun')" class="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 font-semibold rounded-lg transition hover:bg-amber-100">Zelfst. Nw</button>
+          <button id="catBtnVerb" onclick="filterCategory('verb')" class="px-2.5 py-1 bg-red-50 text-red-900 border border-red-200 font-semibold rounded-lg transition hover:bg-red-100">Werkwoorden</button>
+          <button id="catBtnAdj" onclick="filterCategory('adj')" class="px-2.5 py-1 bg-blue-50 text-blue-900 border border-blue-200 font-semibold rounded-lg transition hover:bg-blue-100">Bijvoegl. Nw</button>
+          <button id="catBtnPronoun" onclick="filterCategory('pronoun')" class="px-2.5 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 font-semibold rounded-lg transition hover:bg-emerald-100">Voornaamwoorden</button>
+        </div>
+      </div>
+      
+      <div id="topicsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </div>
+
+    <div id="noticeBox" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-semibold text-center shadow-sm"></div>
+
+    <div class="pt-2 text-center">
+      <button id="startQuizBtn" onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 gold-gradient text-white font-cinzel text-lg font-bold rounded-2xl shadow-xl hover:opacity-95 transform hover:-translate-y-0.5 active:translate-y-0 transition flex items-center justify-center space-x-3 mx-auto">
+        <i class="fa-solid fa-play"></i>
+        <span>Start Oefening</span>
+      </button>
+      <p id="selectionCountText" class="text-xs text-stone-500 mt-2">Geselecteerd: 0 rijtjes</p>
+    </div>
+  </div>
+
+  <!-- TAB 2: LIBRARY (GRAMMATICA OVERZICHT) -->
+  <div id="tabLibrary" class="hidden space-y-6">
+    <div class="roman-card rounded-2xl p-6 space-y-6">
+      
+      <!-- Header & Controls -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center text-white text-lg font-bold shadow">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div>
+            <h2 class="font-cinzel text-xl font-bold text-stone-900">Grammatica Overzicht</h2>
+            <p class="text-xs text-stone-500">Klik op een knop om het gewenste rijtje of de werkwoordstijd uit te vouwen.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="relative flex-grow sm:flex-grow-0">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-xs"></i>
+            <input type="text" id="librarySearchInput" oninput="filterAccordionItems()" placeholder="Zoek rijtje..." class="pl-8 pr-3 py-1.5 bg-stone-50 border border-stone-300 rounded-xl text-xs outline-none focus:border-roman-gold w-full sm:w-48">
+          </div>
+          <button onclick="expandAllAccordion(true)" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition">
+            <i class="fa-solid fa-angles-down mr-1"></i> Alles Uitvouwen
+          </button>
+          <button onclick="expandAllAccordion(false)" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 rounded-xl text-xs font-bold transition">
+            <i class="fa-solid fa-angles-up mr-1"></i> Alles Invouwen
+          </button>
+        </div>
+      </div>
+
+      <!-- Accordion Container -->
+      <div id="accordionContainer" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: DAILY CHALLENGE -->
+  <div id="tabDaily" class="hidden space-y-6">
+    <div class="roman-card rounded-2xl p-8 text-center space-y-6 max-w-xl mx-auto shadow-lg">
+      <div class="w-20 h-20 rounded-full bg-amber-100 border-4 border-roman-gold mx-auto flex items-center justify-center text-amber-600 text-3xl shadow-inner">
+        <i class="fa-solid fa-crown"></i>
+      </div>
+      
+      <div class="space-y-2">
+        <h2 class="font-cinzel text-2xl font-bold text-stone-900">Dagelijkse Romeinse Uitdaging</h2>
+        <p class="text-sm text-stone-600">Beantwoord exact 5 vragen op niveau <span id="dailyLevelLabel" class="font-bold text-roman-red">Klas 2</span> voor je streak en <span class="font-bold text-emerald-600">+50 XP</span>!</p>
+      </div>
+
+      <div id="dailyChallengeStatusBox" class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-left text-xs space-y-2 text-stone-700">
+        <div class="flex items-center space-x-2 font-bold text-amber-900">
+          <i class="fa-solid fa-calendar-day text-amber-600"></i>
+          <span>Status voor vandaag (<span id="dailyDateText">--</span>):</span>
+        </div>
+        <p id="dailyStatusDescription" class="text-stone-600">Nog niet voltooid. Start de challenge en behoud je streak!</p>
+      </div>
+
+      <button id="dailyStartBtn" onclick="startDailyChallenge()" class="w-full py-3.5 red-gradient text-white font-cinzel font-bold text-base rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Start Dagelijkse Uitdaging (5 Vragen)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 4: REWARDS & THEMES -->
+  <div id="tabRewards" class="hidden space-y-6">
+    <div class="roman-card rounded-2xl p-6 space-y-6">
+      <div class="border-b border-stone-200 pb-4">
+        <h2 class="font-cinzel text-xl font-bold text-stone-900">Rangen & Unieke Kleurthema's</h2>
+        <p class="text-xs text-stone-500">Verdien XP door te oefenen om hogere Romeinse rangen en visuele thema's vrij te spelen.</p>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="font-cinzel text-sm font-bold text-stone-800 uppercase tracking-wider">Romeinse Rangen Progressie:</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+          <div id="rankCardTiro" class="p-3 rounded-xl border-2 border-amber-500 bg-amber-50 text-center space-y-1">
+            <i class="fa-solid fa-shield text-amber-600 text-lg"></i>
+            <div class="font-cinzel font-bold text-xs text-stone-900">Tiro</div>
+            <div class="text-[10px] text-stone-500">0 XP</div>
+          </div>
+          <div id="rankCardLegionarius" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
+            <i class="fa-solid fa-helmet-safety text-stone-500 text-lg"></i>
+            <div class="font-cinzel font-bold text-xs text-stone-900">Legionarius</div>
+            <div class="text-[10px] text-stone-500">100 XP</div>
+          </div>
+          <div id="rankCardCenturio" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
+            <i class="fa-solid fa-user-shield text-stone-500 text-lg"></i>
+            <div class="font-cinzel font-bold text-xs text-stone-900">Centurio</div>
+            <div class="text-[10px] text-stone-500">300 XP</div>
+          </div>
+          <div id="rankCardTribunus" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
+            <i class="fa-solid fa-chess-knight text-stone-500 text-lg"></i>
+            <div class="font-cinzel font-bold text-xs text-stone-900">Tribunus</div>
+            <div class="text-[10px] text-stone-500">600 XP</div>
+          </div>
+          <div id="rankCardConsul" class="p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60">
+            <i class="fa-solid fa-crown text-amber-500 text-lg"></i>
+            <div class="font-cinzel font-bold text-xs text-stone-900">Consul</div>
+            <div class="text-[10px] text-stone-500">1000 XP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-3 pt-4 border-t border-stone-200">
+        <h3 class="font-cinzel text-sm font-bold text-stone-800 uppercase tracking-wider">Vrij te spelen App Thema's:</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
+            <div class="space-y-1">
+              <div class="w-8 h-8 rounded-full gold-gradient shadow"></div>
+              <h4 class="font-cinzel font-bold text-sm text-stone-900">Romeins Goud</h4>
+              <p class="text-[11px] text-stone-500">Klassiek marmer & goud. Altijd beschikbaar.</p>
+            </div>
+            <button onclick="applyTheme('default')" id="btnThemeDefault" class="w-full py-1.5 bg-stone-800 text-white rounded-lg text-xs font-bold hover:bg-stone-700">Actief</button>
+          </div>
+
+          <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
+            <div class="space-y-1">
+              <div class="w-8 h-8 rounded-full purple-gradient shadow"></div>
+              <h4 class="font-cinzel font-bold text-sm text-stone-900">Keizerlijk Purper</h4>
+              <p class="text-[11px] text-stone-500">Ontgrendelt bij Legionarius (100 XP).</p>
+            </div>
+            <button id="btnThemePurple" onclick="applyTheme('purple')" class="w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed" disabled>Vergrendeld</button>
+          </div>
+
+          <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
+            <div class="space-y-1">
+              <div class="w-8 h-8 rounded-full red-gradient shadow"></div>
+              <h4 class="font-cinzel font-bold text-sm text-stone-900">Pompeï Rood</h4>
+              <p class="text-[11px] text-stone-500">Ontgrendelt bij Centurio (300 XP).</p>
+            </div>
+            <button id="btnThemePompeii" onclick="applyTheme('pompeii')" class="w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed" disabled>Vergrendeld</button>
+          </div>
+
+          <div class="roman-card rounded-xl p-4 border border-stone-300 flex flex-col justify-between space-y-3">
+            <div class="space-y-1">
+              <div class="w-8 h-8 rounded-full laurel-gradient shadow"></div>
+              <h4 class="font-cinzel font-bold text-sm text-stone-900">Laurier Groen</h4>
+              <p class="text-[11px] text-stone-500">Ontgrendelt bij Tribunus (600 XP).</p>
+            </div>
+            <button id="btnThemeLaurel" onclick="applyTheme('laurel')" class="w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed" disabled>Vergrendeld</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- QUIZ OVERLAY MODAL -->
+<div id="quizOverlay" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="quizBox" class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border-2 border-roman-gold overflow-hidden flex flex-col max-h-[92vh] transition-all">
+    
+    <div class="p-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span id="quizCounter" class="text-xs font-bold text-stone-600 bg-stone-200 px-2.5 py-1 rounded-full">1 / 10</span>
+        <span id="quizTopicBadge" class="text-xs font-bold text-roman-red bg-red-50 border border-red-200 px-2.5 py-1 rounded-full">filia</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="hintBtn" onclick="useHint()" class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold rounded-lg border border-amber-300 transition flex items-center space-x-1" title="-2 XP voor een hint">
+          <i class="fa-solid fa-lightbulb text-amber-500"></i>
+          <span>Hint (-2 XP)</span>
+        </button>
+        <button onclick="closeQuiz()" class="text-stone-400 hover:text-stone-800 text-lg w-8 h-8 rounded-full flex items-center justify-center hover:bg-stone-200 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="w-full bg-stone-200 h-1.5">
+      <div id="quizProgressBar" class="gold-gradient h-1.5 transition-all duration-300" style="width: 10%"></div>
+    </div>
+
+    <div class="p-6 overflow-y-auto flex-grow space-y-5">
+      <div class="text-center space-y-2">
+        <p id="quizQuestionText" class="text-xs text-stone-500 uppercase tracking-wider font-semibold">Wat is de Latijnse vorm van:</p>
+        <h3 id="quizStemWord" class="font-serif font-bold text-3xl sm:text-4xl text-stone-900 tracking-wide">filia</h3>
+        <p id="quizFormDemand" class="text-base text-roman-red font-bold font-cinzel">2e nm. enk. (genitivus)</p>
+      </div>
+
+      <div id="quizHintBox" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-medium text-center shadow-inner"></div>
+
+      <!-- Multiple Choice Options or Typing Input -->
+      <div id="quizInputContainer" class="space-y-3 pt-2">
+        <div id="quizOptionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        <div id="quizTypingContainer" class="hidden space-y-3 text-center">
+          <input type="text" id="typingAnswerInput" placeholder="Typ het antwoord in..." class="w-full px-4 py-3 border-2 border-stone-300 rounded-xl text-center text-lg font-serif font-bold text-stone-900 outline-none focus:border-roman-gold shadow-sm">
+        </div>
+      </div>
+
+      <div id="quizFeedbackBox" class="hidden p-4 rounded-xl text-center space-y-1.5 transition">
+        <p id="quizFeedbackTitle" class="font-bold text-base"></p>
+        <p id="quizFeedbackDetail" class="text-xs sm:text-sm"></p>
+        <p id="quizFeedbackExplanation" class="text-[11px] opacity-90 italic pt-1 border-t border-black/10"></p>
+      </div>
+    </div>
+
+    <div class="p-4 bg-stone-50 border-t border-stone-200 flex justify-between items-center">
+      <span class="text-[11px] text-stone-400 italic hidden sm:inline">Druk op Enter ↵ om te bevestigen / door te gaan</span>
+      <button id="quizActionBtn" onclick="handleQuizAction()" class="ml-auto px-6 py-2.5 gold-gradient text-white text-xs font-bold rounded-xl shadow hover:opacity-95 transition disabled:opacity-40">
+        Controleer
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="border-t border-stone-200 bg-white py-4 text-center text-xs text-stone-400">
+  <p>Schola Latina &copy; 2026 — Latijnse Grammatica Didactiek voor Gymnasia en Athenaea</p>
+</footer>
+
+<script>
+let audioEnabled = true;
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  const btn = document.getElementById('audioBtn');
+  if (audioEnabled) {
+    btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+    btn.classList.remove('opacity-50');
+  } else {
+    btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+    btn.classList.add('opacity-50');
+  }
+}
+
+function playSound(type) {
+  if (!audioEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    if (type === 'correct') {
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc1.type = 'sine'; osc2.type = 'sine';
+      osc1.frequency.setValueAtTime(523.25, now);
+      osc2.frequency.setValueAtTime(659.25, now + 0.08);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc1.connect(gain); osc2.connect(gain);
+      gain.connect(ctx.destination);
+      osc1.start(now); osc2.start(now + 0.08);
+      osc1.stop(now + 0.35); osc2.stop(now + 0.35);
+    } else if (type === 'wrong') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.25);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    }
+  } catch(e){}
+}
+
+let appState = {
+  xp: 0,
+  streak: 1,
+  lastDailyDate: '',
+  level: 2,
+  practiceType: 'words',
+  activeTheme: 'default',
+  selectedTopics: []
+};
+
+let currentQuiz = {
+  mode: 'mc',
+  questions: [],
+  currentIndex: 0,
+  score: 0,
+  selected: null,
+  state: 'answering', // 'answering' or 'feedback'
+  isDaily: false,
+  usedHint: false
+};
+
+const DATABASE = {
+  noun: {
+    filia: {
+      level: 1, title: 'filia (a-stam vrl.)', type: 'noun', groupName: 'a-stam', stem: 'fili-', forms: {
+        'nom. enk.': 'filia', 'gen. enk.': 'filiae', 'dat. enk.': 'filiae', 'acc. enk.': 'filiam', 'abl. enk.': 'filia',
+        'nom. mv.': 'filiae', 'gen. mv.': 'filiarum', 'dat. mv.': 'filiis', 'acc. mv.': 'filias', 'abl. mv.': 'filiis'
+      }
+    },
+    dominus: {
+      level: 1, title: 'dominus (o-stam us mnl.)', type: 'noun', groupName: 'o-stam (us)', stem: 'domin-', forms: {
+        'nom. enk.': 'dominus', 'gen. enk.': 'domini', 'dat. enk.': 'domino', 'acc. enk.': 'dominum', 'abl. enk.': 'domino',
+        'nom. mv.': 'domini', 'gen. mv.': 'dominorum', 'dat. mv.': 'dominis', 'acc. mv.': 'dominos', 'abl. mv.': 'dominis'
+      }
+    },
+    bellum: {
+      level: 1, title: 'bellum (o-stam um onz.)', type: 'noun', groupName: 'o-stam (um)', stem: 'bell-', forms: {
+        'nom. enk.': 'bellum', 'gen. enk.': 'belli', 'dat. enk.': 'bello', 'acc. enk.': 'bellum', 'abl. enk.': 'bello',
+        'nom. mv.': 'bella', 'gen. mv.': 'bellorum', 'dat. mv.': 'bellis', 'acc. mv.': 'bella', 'abl. mv.': 'bellis'
+      }
+    },
+    urbs: {
+      level: 2, title: 'urbs (3e groep vrl.)', type: 'noun', groupName: '3e groep', stem: 'urb-', forms: {
+        'nom. enk.': 'urbs', 'gen. enk.': 'urbis', 'dat. enk.': 'urbi', 'acc. enk.': 'urbem', 'abl. enk.': 'urbe',
+        'nom. mv.': 'urbes', 'gen. mv.': 'urbium', 'dat. mv.': 'urbibus', 'acc. mv.': 'urbes', 'abl. mv.': 'urbibus'
+      }
+    },
+    nomen: {
+      level: 2, title: 'nomen (3e groep onz.)', type: 'noun', groupName: '3e groep (onzijdig)', stem: 'nomin-', forms: {
+        'nom. enk.': 'nomen', 'gen. enk.': 'nominis', 'dat. enk.': 'nomini', 'acc. enk.': 'nomen', 'abl. enk.': 'nomine',
+        'nom. mv.': 'nomina', 'gen. mv.': 'nominum', 'dat. mv.': 'nominibus', 'acc. mv.': 'nomina', 'abl. mv.': 'nominibus'
+      }
+    },
+    manus: {
+      level: 3, title: 'manus (u-stam vrl.)', type: 'noun', groupName: 'u-stam', stem: 'man-', forms: {
+        'nom. enk.': 'manus', 'gen. enk.': 'manus', 'dat. enk.': 'manui', 'acc. enk.': 'manum', 'abl. enk.': 'manu',
+        'nom. mv.': 'manus', 'gen. mv.': 'manuum', 'dat. mv.': 'manibus', 'acc. mv.': 'manus', 'abl. mv.': 'manibus'
+      }
+    },
+    res: {
+      level: 3, title: 'res (e-stam vrl.)', type: 'noun', groupName: 'e-stam', stem: 'r-', forms: {
+        'nom. enk.': 'res', 'gen. enk.': 'rei', 'dat. enk.': 'rei', 'acc. enk.': 'rem', 'abl. enk.': 're',
+        'nom. mv.': 'res', 'gen. mv.': 'rerum', 'dat. mv.': 'rebus', 'acc. mv.': 'res', 'abl. mv.': 'rebus'
+      }
+    }
+  },
+  verb: {
+    salutare: {
+      level: 1, title: 'salutare (a-stam)', type: 'verb', conjugation: '1e vervoeging', stem: 'salut-', forms: {
+        f1: { name: 'praesens 1e pers. enk.', val: 'saluto', expl: 'Praesens: stam + -o' },
+        f2: { name: 'praesens 2e pers. enk.', val: 'salutas', expl: 'Praesens: stam + -s' },
+        f3: { name: 'praesens 3e pers. enk.', val: 'salutat', expl: 'Praesens: stam + -t' },
+        f4: { name: 'imperfectum 1e pers. enk.', val: 'salutabam', expl: 'Imperfectum: stam + -bam' },
+        f5: { name: 'imperfectum 3e pers. enk.', val: 'salutabat', expl: 'Imperfectum: stam + -bat' },
+        f6: { name: 'perfectum 1e pers. enk.', val: 'salutavi', expl: 'Perfectum: v-stam + -i' },
+        f7: { name: 'perfectum 3e pers. enk.', val: 'salutavit', expl: 'Perfectum: v-stam + -it' },
+        f8: { name: 'plusquamperf. 1e pers. enk.', val: 'salutaveram', expl: 'Plusquamperf.: v-stam + -eram' },
+        f9: { name: 'futurum 3e pers. enk.', val: 'salutabit', expl: 'Futurum: stam + -bit' }
+      }
+    }
+  },
+  adj: {
+    fortis: {
+      level: 2, title: 'fortis (3e groep)', type: 'adj', groupName: '3e groep', stem: 'fort-', forms: {
+        'nom. mnl./vrl. enk.': 'fortis', 'nom. onz. enk.': 'forte', 'gen. enk.': 'fortis',
+        'acc. mnl./vrl. enk.': 'fortem', 'nom. onz. mv.': 'fortia', 'gen. mv.': 'fortium'
+      }
+    }
+  },
+  pronoun: {
+    is: {
+      level: 2, title: 'is, ea, id', type: 'pronoun', groupName: 'Aanwijzend / Persoonlijk', stem: 'e-/i-', forms: {
+        'nom. mnl. enk.': 'is', 'nom. vrl. enk.': 'ea', 'nom. onz. enk.': 'id', 'gen. enk.': 'eius'
+      }
+    },
+    hic: {
+      level: 2, title: 'hic, haec, hoc', type: 'pronoun', groupName: 'Aanwijzend', stem: 'h-', forms: {
+        'nom. mnl. enk.': 'hic', 'nom. vrl. enk.': 'haec', 'nom. onz. enk.': 'hoc', 'gen. enk.': 'huius'
+      }
+    },
+    qui: {
+      level: 2, title: 'qui, quae, quod', type: 'pronoun', groupName: 'Betrekkelijk', stem: 'qu-', forms: {
+        'nom. mnl. enk.': 'qui', 'nom. vrl. enk.': 'quae', 'nom. onz. enk.': 'quod', 'gen. enk.': 'cuius'
+      }
+    }
+  }
+};
+
+const ENDINGS_DB = [
+  { level: 1, category: 'Praesens Actief', prompt: '1e pers. enk. (ik)', answer: '-o', expl: 'Standaard uitgang 1e pers. enk.' },
+  { level: 1, category: 'Praesens Actief', prompt: '2e pers. enk. (jij)', answer: '-s', expl: 'Standaard uitgang 2e pers. enk.' },
+  { level: 1, category: 'Praesens Actief', prompt: '3e pers. enk. (hij/zij)', answer: '-t', expl: 'Standaard uitgang 3e pers. enk.' },
+  { level: 1, category: 'Imperfectum', prompt: 'Kenletter imperfectum', answer: '-ba-', expl: 'Kenmerk van het imperfectum.' }
+];
+
+/* ALL 32 GRAMMAR ACCORDION DEFINITIONS */
+const GRAMMAR_ACCORDION_DATA = [
+  // 1. filia
+  { id: 'filia', label: 'filia', category: 'Zelfstandig Nw', subtitle: 'a-stam (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'filia', 'filiae'],
+    ['Genitivus', 'filiae', 'filiarum'],
+    ['Dativus', 'filiae', 'filiis'],
+    ['Accusativus', 'filiam', 'filias'],
+    ['Ablativus', 'filia', 'filiis']
+  ]},
+  // 2. dominus
+  { id: 'dominus', label: 'dominus', category: 'Zelfstandig Nw', subtitle: 'o-stam (mannelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'dominus', 'domini'],
+    ['Genitivus', 'domini', 'dominorum'],
+    ['Dativus', 'domino', 'dominis'],
+    ['Accusativus', 'dominum', 'dominos'],
+    ['Ablativus', 'domino', 'dominis']
+  ]},
+  // 3. bellum
+  { id: 'bellum', label: 'bellum', category: 'Zelfstandig Nw', subtitle: 'o-stam (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'bellum', 'bella'],
+    ['Genitivus', 'belli', 'bellorum'],
+    ['Dativus', 'bello', 'bellis'],
+    ['Accusativus', 'bellum', 'bella'],
+    ['Ablativus', 'bello', 'bellis']
+  ]},
+  // 4. urbs
+  { id: 'urbs', label: 'urbs', category: 'Zelfstandig Nw', subtitle: '3e groep (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'urbs', 'urbes'],
+    ['Genitivus', 'urbis', 'urbium'],
+    ['Dativus', 'urbi', 'urbibus'],
+    ['Accusativus', 'urbem', 'urbes'],
+    ['Ablativus', 'urbe', 'urbibus']
+  ]},
+  // 5. nomen
+  { id: 'nomen', label: 'nomen', category: 'Zelfstandig Nw', subtitle: '3e groep (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'nomen', 'nomina'],
+    ['Genitivus', 'nominis', 'nominum'],
+    ['Dativus', 'nomini', 'nominibus'],
+    ['Accusativus', 'nomen', 'nomina'],
+    ['Ablativus', 'nomine', 'nominibus']
+  ]},
+  // 6. manus
+  { id: 'manus', label: 'manus', category: 'Zelfstandig Nw', subtitle: 'u-stam (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'manus', 'manus'],
+    ['Genitivus', 'manus', 'manuum'],
+    ['Dativus', 'manui', 'manibus'],
+    ['Accusativus', 'manum', 'manus'],
+    ['Ablativus', 'manu', 'manibus']
+  ]},
+  // 7. res
+  { id: 'res', label: 'res', category: 'Zelfstandig Nw', subtitle: 'e-stam (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'res', 'res'],
+    ['Genitivus', 'rei', 'rerum'],
+    ['Dativus', 'rei', 'rebus'],
+    ['Accusativus', 'rem', 'res'],
+    ['Ablativus', 're', 'rebus']
+  ]},
+  // 8. fortis mnl/vrl
+  { id: 'fortis_m_f', label: 'fortis mnl/vrl', category: 'Bijvoeglijk Nw', subtitle: '3e groep (mannelijk & vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'fortis', 'fortes'],
+    ['Genitivus', 'fortis', 'fortium'],
+    ['Dativus', 'forti', 'fortibus'],
+    ['Accusativus', 'fortem', 'fortes'],
+    ['Ablativus', 'forti', 'fortibus']
+  ]},
+  // 9. fortis onz
+  { id: 'fortis_n', label: 'fortis onz', category: 'Bijvoeglijk Nw', subtitle: '3e groep (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'forte', 'fortia'],
+    ['Genitivus', 'fortis', 'fortium'],
+    ['Dativus', 'forti', 'fortibus'],
+    ['Accusativus', 'forte', 'fortia'],
+    ['Ablativus', 'forti', 'fortibus']
+  ]},
+  // 10. comparativus mnl/vrl
+  { id: 'comp_m_f', label: 'comparativus mnl/vrl (altior)', category: 'Trappen van Vergelijking', subtitle: 'Vergrootrap (mannelijk & vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'altior', 'altiores'],
+    ['Genitivus', 'altioris', 'altiorum'],
+    ['Dativus', 'altiori', 'altioribus'],
+    ['Accusativus', 'altiorem', 'altiores'],
+    ['Ablativus', 'altiore', 'altioribus']
+  ]},
+  // 11. comparativus onz
+  { id: 'comp_n', label: 'comparativus onz (altior)', category: 'Trappen van Vergelijking', subtitle: 'Vergrootrap (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'altius', 'altiora'],
+    ['Genitivus', 'altioris', 'altiorum'],
+    ['Dativus', 'altiori', 'altioribus'],
+    ['Accusativus', 'altius', 'altiora'],
+    ['Ablativus', 'altiore', 'altioribus']
+  ]},
+  // 12. superlativus mnl
+  { id: 'superl_m', label: 'superlativus mnl', category: 'Trappen van Vergelijking', subtitle: 'Overtreffende trap (altissimus)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'altissimus', 'altissimi'],
+    ['Genitivus', 'altissimi', 'altissimorum'],
+    ['Dativus', 'altissimo', 'altissimis'],
+    ['Accusativus', 'altissimum', 'altissimos'],
+    ['Ablativus', 'altissimo', 'altissimis']
+  ]},
+  // 13. superlativus vrl
+  { id: 'superl_f', label: 'superlativus vrl', category: 'Trappen van Vergelijking', subtitle: 'Overtreffende trap (altissima)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'altissima', 'altissimae'],
+    ['Genitivus', 'altissimae', 'altissimarum'],
+    ['Dativus', 'altissimae', 'altissimis'],
+    ['Accusativus', 'altissimam', 'altissimas'],
+    ['Ablativus', 'altissima', 'altissimis']
+  ]},
+  // 14. superlativus onz
+  { id: 'superl_n', label: 'superlativus onz', category: 'Trappen van Vergelijking', subtitle: 'Overtreffende trap (altissimum)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
+    ['Nominativus', 'altissimum', 'altissima'],
+    ['Genitivus', 'altissimi', 'altissimorum'],
+    ['Dativus', 'altissimo', 'altissimis'],
+    ['Accusativus', 'altissimum', 'altissima'],
+    ['Ablativus', 'altissimo', 'altissimis']
+  ]},
+  // 15. is, ea, id
+  { id: 'is_ea_id', label: 'is, ea, id', category: 'Voornaamwoord', subtitle: 'Aanwijzend / Persoonlijk (mnl, vrl, onz)', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'is', 'ii / ei'], ['Gen.', 'eius', 'eorum'], ['Dat.', 'ei', 'iis / eis'], ['Acc.', 'eum', 'eos'], ['Abl.', 'eo', 'iis / eis']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ea', 'eae'], ['Gen.', 'eius', 'earum'], ['Dat.', 'ei', 'iis / eis'], ['Acc.', 'eam', 'eas'], ['Abl.', 'ea', 'iis / eis']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'id', 'ea'], ['Gen.', 'eius', 'eorum'], ['Dat.', 'ei', 'iis / eis'], ['Acc.', 'id', 'ea'], ['Abl.', 'eo', 'iis / eis']] }
+  }},
+  // 16. hic, haec, hoc
+  { id: 'hic_haec_hoc', label: 'hic, haec, hoc', category: 'Voornaamwoord', subtitle: 'Aanwijzend (deze, dit)', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'hic', 'hi'], ['Gen.', 'huius', 'horum'], ['Dat.', 'huic', 'his'], ['Acc.', 'hunc', 'hos'], ['Abl.', 'hoc', 'his']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'haec', 'hae'], ['Gen.', 'huius', 'harum'], ['Dat.', 'huic', 'his'], ['Acc.', 'hanc', 'has'], ['Abl.', 'hac', 'his']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'hoc', 'haec'], ['Gen.', 'huius', 'horum'], ['Dat.', 'huic', 'his'], ['Acc.', 'hoc', 'haec'], ['Abl.', 'hoc', 'his']] }
+  }},
+  // 17. ille, illa, illud
+  { id: 'ille_illa_illud', label: 'ille, illa, illud', category: 'Voornaamwoord', subtitle: 'Aanwijzend (die, dat)', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ille', 'illi'], ['Gen.', 'illius', 'illorum'], ['Dat.', 'illi', 'illis'], ['Acc.', 'illum', 'illos'], ['Abl.', 'illo', 'illis']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'illa', 'illae'], ['Gen.', 'illius', 'illarum'], ['Dat.', 'illi', 'illis'], ['Acc.', 'illam', 'illas'], ['Abl.', 'illa', 'illis']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'illud', 'illa'], ['Gen.', 'illius', 'illorum'], ['Dat.', 'illi', 'illis'], ['Acc.', 'illud', 'illa'], ['Abl.', 'illo', 'illis']] }
+  }},
+  // 18. ipse, ipsa, ipsum
+  { id: 'ipse_ipsa_ipsum', label: 'ipse, ipsa, ipsum', category: 'Voornaamwoord', subtitle: 'Zelf / Zelfs', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ipse', 'ipsi'], ['Gen.', 'ipsius', 'ipsorum'], ['Dat.', 'ipsi', 'ipsis'], ['Acc.', 'ipsum', 'ipsos'], ['Abl.', 'ipso', 'ipsis']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ipsa', 'ipsae'], ['Gen.', 'ipsius', 'ipsarum'], ['Dat.', 'ipsi', 'ipsis'], ['Acc.', 'ipsam', 'ipsas'], ['Abl.', 'ipsa', 'ipsis']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ipsum', 'ipsa'], ['Gen.', 'ipsius', 'ipsorum'], ['Dat.', 'ipsi', 'ipsis'], ['Acc.', 'ipsum', 'ipsa'], ['Abl.', 'ipso', 'ipsis']] }
+  }},
+  // 19. idem, eadem, idem
+  { id: 'idem_eadem_idem', label: 'idem, eadem, idem', category: 'Voornaamwoord', subtitle: 'Aanwijzend (dezelfde, hetzelfde)', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'idem', 'iidem / eidem'], ['Gen.', 'eiusdem', 'eorundem'], ['Dat.', 'eidem', 'iisdem / eisdem'], ['Acc.', 'eundem', 'eosdem'], ['Abl.', 'eodem', 'iisdem / eisdem']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'eadem', 'eaedem'], ['Gen.', 'eiusdem', 'earundem'], ['Dat.', 'eidem', 'iisdem / eisdem'], ['Acc.', 'eandem', 'easdem'], ['Abl.', 'eadem', 'iisdem / eisdem']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'idem', 'eadem'], ['Gen.', 'eiusdem', 'eorundem'], ['Dat.', 'eidem', 'iisdem / eisdem'], ['Acc.', 'idem', 'eadem'], ['Abl.', 'eodem', 'iisdem / eisdem']] }
+  }},
+  // 20. ego
+  { id: 'ego', label: 'ego', category: 'Voornaamwoord', subtitle: 'Persoonlijk (ik)', headers: ['Naamval', 'Vorm'], rows: [
+    ['Nominativus', 'ego (ik)'],
+    ['Genitivus', 'mei (van mij)'],
+    ['Dativus', 'mihi (aan/voor mij)'],
+    ['Accusativus', 'me (mij)'],
+    ['Ablativus', 'me (door/van mij)']
+  ]},
+  // 21. tu
+  { id: 'tu', label: 'tu', category: 'Voornaamwoord', subtitle: 'Persoonlijk (jij)', headers: ['Naamval', 'Vorm'], rows: [
+    ['Nominativus', 'tu (jij)'],
+    ['Genitivus', 'tui (van jou)'],
+    ['Dativus', 'tibi (aan/voor jou)'],
+    ['Accusativus', 'te (jou)'],
+    ['Ablativus', 'te (door/van jou)']
+  ]},
+  // 22. sui
+  { id: 'sui', label: 'sui', category: 'Voornaamwoord', subtitle: 'Wederkerend (zichzelf - enk. & mv. gelijk)', headers: ['Naamval', 'Vorm'], rows: [
+    ['Nominativus', '— (geen nom.)'],
+    ['Genitivus', 'sui (van zich)'],
+    ['Dativus', 'sibi (aan/voor zich)'],
+    ['Accusativus', 'se (zich)'],
+    ['Ablativus', 'se (door/van zich)']
+  ]},
+  // 23. nos
+  { id: 'nos', label: 'nos', category: 'Voornaamwoord', subtitle: 'Persoonlijk (wij)', headers: ['Naamval', 'Vorm'], rows: [
+    ['Nominativus', 'nos (wij)'],
+    ['Genitivus', 'nostri / nostrum (van ons)'],
+    ['Dativus', 'nobis (aan/voor ons)'],
+    ['Accusativus', 'nos (ons)'],
+    ['Ablativus', 'nobis (door/van ons)']
+  ]},
+  // 24. vos
+  { id: 'vos', label: 'vos', category: 'Voornaamwoord', subtitle: 'Persoonlijk (jullie)', headers: ['Naamval', 'Vorm'], rows: [
+    ['Nominativus', 'vos (jullie)'],
+    ['Genitivus', 'vestri / vestrum (van jullie)'],
+    ['Dativus', 'vobis (aan/voor jullie)'],
+    ['Accusativus', 'vos (jullie)'],
+    ['Ablativus', 'vobis (door/van jullie)']
+  ]},
+  // 25. qui, quae, quod
+  { id: 'qui_quae_quod', label: 'qui, quae, quod', category: 'Voornaamwoord', subtitle: 'Betrekkelijk (die, dat, wie, wat)', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'qui', 'qui'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quem', 'quos'], ['Abl.', 'quo', 'quibus']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quae', 'quae'], ['Gen.', 'cuius', 'quarum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quam', 'quas'], ['Abl.', 'qua', 'quibus']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quod', 'quae'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quod', 'quae'], ['Abl.', 'quo', 'quibus']] }
+  }},
+  // 26. Quis, Quid (Updated Title as requested!)
+  { id: 'quis_quid', label: 'Quis, Quid', category: 'Voornaamwoord', subtitle: 'Vragend voornaamwoord (wie, wat)', genderTabs: true, tables: {
+    mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quis', 'qui'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quem', 'quos'], ['Abl.', 'quo', 'quibus']] },
+    vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quis', 'quae'], ['Gen.', 'cuius', 'quarum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quam', 'quas'], ['Abl.', 'qua', 'quibus']] },
+    onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quid / quod', 'quae'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quid / quod', 'quae'], ['Abl.', 'quo', 'quibus']] }
+  }},
+  // 27. praesens
+  { id: 'praesens', label: 'praesens', category: 'Werkwoordstijd', subtitle: 'Onvoltooid Tegenwoordige Tijd (salutare)', isVerbTense: true, verbData: {
+    ind: {
+      act: [['1e enk. (ik)', 'saluto'], ['2e enk. (jij)', 'salutas'], ['3e enk. (hij/zij)', 'salutat'], ['1e mv. (wij)', 'salutamus'], ['2e mv. (jullie)', 'salutatis'], ['3e mv. (zij)', 'salutant']],
+      pass: [['1e enk. (ik)', 'salutor'], ['2e enk. (jij)', 'salutaris'], ['3e enk. (hij/zij)', 'salutatur'], ['1e mv. (wij)', 'salutamur'], ['2e mv. (jullie)', 'salutamini'], ['3e mv. (zij)', 'salutantur']]
+    }
+  }},
+  // 28. imperfectum
+  { id: 'imperfectum', label: 'imperfectum', category: 'Werkwoordstijd', subtitle: 'Onvoltooid Verleden Tijd (salutare)', isVerbTense: true, verbData: {
+    ind: {
+      act: [['1e enk.', 'salutabam'], ['2e enk.', 'salutabas'], ['3e enk.', 'salutabat'], ['1e mv.', 'salutabamus'], ['2e mv.', 'salutabatis'], ['3e mv.', 'salutabant']],
+      pass: [['1e enk.', 'salutabar'], ['2e enk.', 'salutabaris'], ['3e enk.', 'salutabatur'], ['1e mv.', 'salutabamur'], ['2e mv.', 'salutabamini'], ['3e mv.', 'salutabantur']]
+    }
+  }},
+  // 29. perfectum
+  { id: 'perfectum', label: 'perfectum', category: 'Werkwoordstijd', subtitle: 'Voltooid Tegenwoordige Tijd (salutare)', isVerbTense: true, verbData: {
+    ind: {
+      act: [['1e enk.', 'salutavi'], ['2e enk.', 'salutavisti'], ['3e enk.', 'salutavit'], ['1e mv.', 'salutavimus'], ['2e mv.', 'salutavistis'], ['3e mv.', 'salutaverunt']],
+      pass: [['1e enk.', 'salutatus sum'], ['2e enk.', 'salutatus es'], ['3e enk.', 'salutatus est'], ['1e mv.', 'salutati sumus'], ['2e mv.', 'salutati estis'], ['3e mv.', 'salutati sunt']]
+    }
+  }},
+  // 30. plusquamperf.
+  { id: 'plusquamperf', label: 'plusquamperf.', category: 'Werkwoordstijd', subtitle: 'Voltooid Verleden Tijd (salutare)', isVerbTense: true, verbData: {
+    ind: {
+      act: [['1e enk.', 'salutaveram'], ['2e enk.', 'salutaveras'], ['3e enk.', 'salutaverat'], ['1e mv.', 'salutaveramus'], ['2e mv.', 'salutaveratis'], ['3e mv.', 'salutaverant']],
+      pass: [['1e enk.', 'salutatus eram'], ['2e enk.', 'salutatus eras'], ['3e enk.', 'salutatus erat'], ['1e mv.', 'salutati eramus'], ['2e mv.', 'salutati eratis'], ['3e mv.', 'salutati erant']]
+    }
+  }},
+  // 31. futurum
+  { id: 'futurum', label: 'futurum', category: 'Werkwoordstijd', subtitle: 'Onvoltooid Toekomende Tijd (salutare)', isVerbTense: true, verbData: {
+    ind: {
+      act: [['1e enk.', 'salutabo'], ['2e enk.', 'salutabis'], ['3e enk.', 'salutabit'], ['1e mv.', 'salutabimus'], ['2e mv.', 'salutabitis'], ['3e mv.', 'salutabunt']],
+      pass: [['1e enk.', 'salutabor'], ['2e enk.', 'salutaberis'], ['3e enk.', 'salutabitur'], ['1e mv.', 'salutabimur'], ['2e mv.', 'salutabimini'], ['3e mv.', 'salutabuntur']]
+    }
+  }},
+  // 32. futurum exactum
+  { id: 'futurum_exactum', label: 'futurum exactum', category: 'Werkwoordstijd', subtitle: 'Voltooid Toekomende Tijd (salutare)', isVerbTense: true, verbData: {
+    ind: {
+      act: [['1e enk.', 'salutavero'], ['2e enk.', 'salutaveris'], ['3e enk.', 'salutaverit'], ['1e mv.', 'salutaverimus'], ['2e mv.', 'salutaveritis'], ['3e mv.', 'salutaverint']],
+      pass: [['1e enk.', 'salutatus ero'], ['2e enk.', 'salutatus eris'], ['3e enk.', 'salutatus erit'], ['1e mv.', 'salutati erimus'], ['2e mv.', 'salutati eritis'], ['3e mv.', 'salutati erunt']]
+    }
+  }}
+];
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('schola_latina_progress');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      appState.xp = parsed.xp || 0;
+      appState.streak = parsed.streak || 1;
+      appState.level = parsed.level || 2;
+      appState.activeTheme = parsed.activeTheme || 'default';
+      appState.lastDailyDate = parsed.lastDailyDate || '';
+    }
+  } catch(e){}
+  
+  // By default, select ALL topics matching current level!
+  selectAllForLevel();
+  updateRankAndThemeUI();
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem('schola_latina_progress', JSON.stringify({
+      xp: appState.xp,
+      streak: appState.streak,
+      level: appState.level,
+      activeTheme: appState.activeTheme,
+      lastDailyDate: appState.lastDailyDate
+    }));
+  } catch(e){}
+}
+
+function selectAllForLevel() {
+  const selected = [];
+  for (let c in DATABASE) {
+    for (let k in DATABASE[c]) {
+      if (DATABASE[c][k].level <= appState.level) {
+        selected.push(k);
+      }
+    }
+  }
+  appState.selectedTopics = selected;
+}
+
+function updateRankAndThemeUI() {
+  const levelSelect = document.getElementById('levelSelect');
+  if (levelSelect) levelSelect.value = appState.level;
+
+  const activeLevelBadge = document.getElementById('activeLevelBadge');
+  if (activeLevelBadge) activeLevelBadge.innerText = `Klas ${appState.level}`;
+
+  const dailyLevelLabel = document.getElementById('dailyLevelLabel');
+  if (dailyLevelLabel) dailyLevelLabel.innerText = `Klas ${appState.level}`;
+
+  const xp = appState.xp;
+  let rank = 'Tiro';
+  let icon = 'fa-shield';
+  let nextXp = 100;
+  let currentBase = 0;
+
+  if (xp >= 1000) {
+    rank = 'Consul / Imperator';
+    icon = 'fa-crown';
+    nextXp = 1000;
+    currentBase = 1000;
+  } else if (xp >= 600) {
+    rank = 'Tribunus';
+    icon = 'fa-chess-knight';
+    nextXp = 1000;
+    currentBase = 600;
+  } else if (xp >= 300) {
+    rank = 'Centurio';
+    icon = 'fa-user-shield';
+    nextXp = 600;
+    currentBase = 300;
+  } else if (xp >= 100) {
+    rank = 'Legionarius';
+    icon = 'fa-helmet-safety';
+    nextXp = 300;
+    currentBase = 100;
+  }
+
+  document.getElementById('rankTitle').innerText = rank;
+  document.getElementById('rankIcon').className = `fa-solid ${icon} text-amber-400`;
+  document.getElementById('xpCounter').innerText = `${xp} XP`;
+  document.getElementById('streakCounter').innerText = `${appState.streak} Dag${appState.streak > 1 ? 'en' : ''}`;
+
+  let pct = 100;
+  if (nextXp > currentBase) {
+    pct = Math.min(100, Math.max(0, ((xp - currentBase) / (nextXp - currentBase)) * 100));
+  }
+  document.getElementById('rankProgressBar').style.width = `${pct}%`;
+
+  // Theme unlocking logic
+  const btnPurple = document.getElementById('btnThemePurple');
+  const btnPompeii = document.getElementById('btnThemePompeii');
+  const btnLaurel = document.getElementById('btnThemeLaurel');
+
+  if (btnPurple) {
+    if (xp >= 100) {
+      btnPurple.disabled = false;
+      btnPurple.className = "w-full py-1.5 bg-purple-900 text-white rounded-lg text-xs font-bold hover:opacity-90 shadow";
+      btnPurple.innerText = appState.activeTheme === 'purple' ? 'Actief' : 'Kiezen';
+    } else {
+      btnPurple.disabled = true;
+      btnPurple.className = "w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed";
+      btnPurple.innerText = 'Vergrendeld';
+    }
+  }
+
+  if (btnPompeii) {
+    if (xp >= 300) {
+      btnPompeii.disabled = false;
+      btnPompeii.className = "w-full py-1.5 bg-red-900 text-white rounded-lg text-xs font-bold hover:opacity-90 shadow";
+      btnPompeii.innerText = appState.activeTheme === 'pompeii' ? 'Actief' : 'Kiezen';
+    } else {
+      btnPompeii.disabled = true;
+      btnPompeii.className = "w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed";
+      btnPompeii.innerText = 'Vergrendeld';
+    }
+  }
+
+  if (btnLaurel) {
+    if (xp >= 600) {
+      btnLaurel.disabled = false;
+      btnLaurel.className = "w-full py-1.5 bg-emerald-800 text-white rounded-lg text-xs font-bold hover:opacity-90 shadow";
+      btnLaurel.innerText = appState.activeTheme === 'laurel' ? 'Actief' : 'Kiezen';
+    } else {
+      btnLaurel.disabled = true;
+      btnLaurel.className = "w-full py-1.5 bg-stone-200 text-stone-500 rounded-lg text-xs font-bold cursor-not-allowed";
+      btnLaurel.innerText = 'Vergrendeld';
+    }
+  }
+
+  const btnDefault = document.getElementById('btnThemeDefault');
+  if (btnDefault) {
+    btnDefault.innerText = appState.activeTheme === 'default' ? 'Actief' : 'Kiezen';
+  }
+
+  applyTheme(appState.activeTheme, false);
+  updateDailyStatusBox();
+}
+
+function applyTheme(themeName, save = true) {
+  document.body.classList.remove('theme-purple', 'theme-pompeii', 'theme-laurel');
+  if (themeName !== 'default') {
+    document.body.classList.add(`theme-${themeName}`);
+  }
+  appState.activeTheme = themeName;
+  if (save) {
+    saveProgress();
+    updateRankAndThemeUI();
+  }
+}
+
+function changeLevel() {
+  appState.level = parseInt(document.getElementById('levelSelect').value);
+  selectAllForLevel();
+  saveProgress();
+  updateRankAndThemeUI();
+  renderTopicsGrid();
+}
+
+function filterCategory(cat) {
+  if (cat === 'all') {
+    selectAllForLevel();
+  } else if (cat === 'none') {
+    appState.selectedTopics = [];
+  } else if (DATABASE[cat]) {
+    const keys = Object.keys(DATABASE[cat]).filter(k => DATABASE[cat][k].level <= appState.level);
+    const allSelected = keys.length > 0 && keys.every(k => appState.selectedTopics.includes(k));
+    
+    if (allSelected) {
+      appState.selectedTopics = appState.selectedTopics.filter(k => !keys.includes(k));
+    } else {
+      keys.forEach(k => {
+        if (!appState.selectedTopics.includes(k)) appState.selectedTopics.push(k);
+      });
+    }
+  }
+  renderTopicsGrid();
+}
+
+function renderTopicsGrid() {
+  const grid = document.getElementById('topicsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  for (let catKey in DATABASE) {
+    for (let itemKey in DATABASE[catKey]) {
+      const item = DATABASE[catKey][itemKey];
+      if (item.level > appState.level) continue;
+
+      const isSelected = appState.selectedTopics.includes(itemKey);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.onclick = () => toggleTopicSelection(itemKey);
+      btn.className = `p-3 rounded-xl border-2 text-left transition flex items-center justify-between ${
+        isSelected ? 'btn-selected' : 'border-stone-200 bg-white text-stone-600 hover:border-roman-gold hover:bg-stone-50'
+      }`;
+      btn.innerHTML = `
+        <div>
+          <span class="font-bold text-xs sm:text-sm block text-stone-900">${item.title}</span>
+          <span class="text-[10px] text-stone-500 uppercase tracking-wider">${catKey} • Klas ${item.level}</span>
+        </div>
+        <div class="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold ${
+          isSelected ? 'bg-roman-gold text-white shadow-sm' : 'bg-stone-100 text-transparent border border-stone-300'
+        }">
+          <i class="fa-solid fa-check"></i>
+        </div>
+      `;
+      grid.appendChild(btn);
+    }
+  }
+
+  const countEl = document.getElementById('selectionCountText');
+  if (countEl) {
+    countEl.innerText = `Geselecteerd: ${appState.selectedTopics.length} grammatica-rijtjes (Niveau Klas ${appState.level})`;
+  }
+}
+
+function toggleTopicSelection(key) {
+  const idx = appState.selectedTopics.indexOf(key);
+  if (idx > -1) appState.selectedTopics.splice(idx, 1);
+  else appState.selectedTopics.push(key);
+  renderTopicsGrid();
+}
+
+function setPracticeMode(mode) {
+  appState.practiceType = mode;
+  const btnWords = document.getElementById('modeTypeWord');
+  const btnEndings = document.getElementById('modeTypeEnding');
+  if (mode === 'words') {
+    btnWords.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition btn-selected";
+    btnEndings.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition";
+  } else {
+    btnEndings.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition btn-selected";
+    btnWords.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition";
+  }
+}
+
+function switchTab(tab) {
+  ['tabPractice', 'tabLibrary', 'tabDaily', 'tabRewards'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+  ['tabBtnPractice', 'tabBtnLibrary', 'tabBtnDaily', 'tabBtnRewards'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active-tab');
+  });
+
+  if (tab === 'practice') {
+    document.getElementById('tabPractice').classList.remove('hidden');
+    document.getElementById('tabBtnPractice').classList.add('active-tab');
+  } else if (tab === 'library') {
+    document.getElementById('tabLibrary').classList.remove('hidden');
+    document.getElementById('tabBtnLibrary').classList.add('active-tab');
+    renderGrammarAccordion();
+  } else if (tab === 'daily') {
+    document.getElementById('tabDaily').classList.remove('hidden');
+    document.getElementById('tabBtnDaily').classList.add('active-tab');
+    updateDailyStatusBox();
+  } else if (tab === 'rewards') {
+    document.getElementById('tabRewards').classList.remove('hidden');
+    document.getElementById('tabBtnRewards').classList.add('active-tab');
+    updateRankAndThemeUI();
+  }
+}
+
+/* RENDERING GRAMMAR ACCORDION */
+function renderGrammarAccordion() {
+  const container = document.getElementById('accordionContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  GRAMMAR_ACCORDION_DATA.forEach(item => {
+    const card = document.createElement('div');
+    card.id = `accCard_${item.id}`;
+    card.className = "accordion-item border border-stone-200 rounded-2xl bg-white shadow-sm overflow-hidden transition";
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = "w-full p-4 text-left font-bold flex items-center justify-between hover:bg-amber-50/60 transition group";
+    btn.onclick = () => toggleAccordionItem(item.id);
+    btn.innerHTML = `
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-amber-100 text-roman-goldDark flex items-center justify-center font-bold text-sm group-hover:scale-105 transition">
+          <i class="fa-solid ${item.isVerbTense ? 'fa-bolt' : 'fa-list-ol'}"></i>
+        </div>
+        <div>
+          <span class="font-cinzel text-base text-stone-900 block font-black">${item.label}</span>
+          <span class="text-[11px] text-stone-500 font-medium">${item.category} • ${item.subtitle}</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span class="text-xs text-roman-goldDark font-semibold hidden sm:inline">Bekijk rijtje</span>
+        <i id="accIcon_${item.id}" class="fa-solid fa-chevron-down text-stone-400 group-hover:text-roman-gold text-sm transition-transform duration-200"></i>
+      </div>
+    `;
+
+    const contentBox = document.createElement('div');
+    contentBox.id = `accContent_${item.id}`;
+    contentBox.className = "hidden border-t border-stone-100 p-4 bg-stone-50/50 space-y-4";
+
+    if (item.isVerbTense) {
+      contentBox.innerHTML = generateVerbTenseHTML(item);
+    } else if (item.genderTabs) {
+      contentBox.innerHTML = generateGenderTabsHTML(item);
+    } else {
+      contentBox.innerHTML = generateStandardTableHTML(item.headers, item.rows);
+    }
+
+    card.appendChild(btn);
+    card.appendChild(contentBox);
+    container.appendChild(card);
+  });
+}
+
+function toggleAccordionItem(id) {
+  const content = document.getElementById(`accContent_${id}`);
+  const icon = document.getElementById(`accIcon_${id}`);
+  if (!content) return;
+  const isHidden = content.classList.contains('hidden');
+  if (isHidden) {
+    content.classList.remove('hidden');
+    if (icon) icon.classList.add('rotate-180');
+  } else {
+    content.classList.add('hidden');
+    if (icon) icon.classList.remove('rotate-180');
+  }
+}
+
+function expandAllAccordion(expand) {
+  GRAMMAR_ACCORDION_DATA.forEach(item => {
+    const content = document.getElementById(`accContent_${item.id}`);
+    const icon = document.getElementById(`accIcon_${item.id}`);
+    if (content) {
+      if (expand) {
+        content.classList.remove('hidden');
+        if (icon) icon.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        if (icon) icon.classList.remove('rotate-180');
+      }
+    }
+  });
+}
+
+function filterAccordionItems() {
+  const query = document.getElementById('librarySearchInput').value.toLowerCase().trim();
+  GRAMMAR_ACCORDION_DATA.forEach(item => {
+    const card = document.getElementById(`accCard_${item.id}`);
+    if (!card) return;
+    const match = item.label.toLowerCase().includes(query) || item.category.toLowerCase().includes(query) || item.subtitle.toLowerCase().includes(query);
+    card.style.display = match ? 'block' : 'none';
+  });
+}
+
+function generateStandardTableHTML(headers, rows) {
+  let hHtml = headers.map(h => `<th class="py-2 px-3 text-stone-600 font-cinzel text-xs uppercase tracking-wider border-b border-stone-200">${h}</th>`).join('');
+  let rHtml = rows.map(r => `
+    <tr class="border-b border-stone-200/60 hover:bg-amber-50/40 transition">
+      <td class="py-2 px-3 font-medium text-stone-500 text-xs">${r[0]}</td>
+      <td class="py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[1] || ''}</td>
+      ${r[2] !== undefined ? `<td class="py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[2]}</td>` : ''}
+    </tr>
+  `).join('');
+  return `
+    <div class="overflow-x-auto">
+      <table class="w-full text-left bg-white rounded-xl border border-stone-200 overflow-hidden">
+        <thead class="bg-stone-100/80"><tr>${hHtml}</tr></thead>
+        <tbody>${rHtml}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function generateGenderTabsHTML(item) {
+  const mnlTable = generateStandardTableHTML(item.tables.mnl.headers, item.tables.mnl.rows);
+  const vrlTable = generateStandardTableHTML(item.tables.vrl.headers, item.tables.vrl.rows);
+  const onzTable = generateStandardTableHTML(item.tables.onz.headers, item.tables.onz.rows);
+  return `
+    <div class="space-y-3">
+      <div class="flex space-x-2 border-b border-stone-200 pb-2 text-xs font-bold">
+        <button onclick="switchGenderSubTab('${item.id}', 'mnl')" id="btnG_${item.id}_mnl" class="px-3 py-1.5 rounded-lg bg-roman-gold text-white shadow-sm">Mannelijk</button>
+        <button onclick="switchGenderSubTab('${item.id}', 'vrl')" id="btnG_${item.id}_vrl" class="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200">Vrouwelijk</button>
+        <button onclick="switchGenderSubTab('${item.id}', 'onz')" id="btnG_${item.id}_onz" class="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200">Onzijdig</button>
+      </div>
+      <div id="tabG_${item.id}_mnl">${mnlTable}</div>
+      <div id="tabG_${item.id}_vrl" class="hidden">${vrlTable}</div>
+      <div id="tabG_${item.id}_onz" class="hidden">${onzTable}</div>
+    </div>
+  `;
+}
+
+function switchGenderSubTab(id, gender) {
+  ['mnl', 'vrl', 'onz'].forEach(g => {
+    const tab = document.getElementById(`tabG_${id}_${g}`);
+    const btn = document.getElementById(`btnG_${id}_${g}`);
+    if (tab) tab.classList.add('hidden');
+    if (btn) btn.className = "px-3 py-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200";
+  });
+  const activeTab = document.getElementById(`tabG_${id}_${gender}`);
+  const activeBtn = document.getElementById(`btnG_${id}_${gender}`);
+  if (activeTab) activeTab.classList.remove('hidden');
+  if (activeBtn) activeBtn.className = "px-3 py-1.5 rounded-lg bg-roman-gold text-white shadow-sm";
+}
+
+function generateVerbTenseHTML(item) {
+  const vData = item.verbData;
+  let indActRows = vData.ind.act.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
+  let indPassRows = vData.ind.pass.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
+  return `
+    <div class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm">
+          <h4 class="font-cinzel text-xs font-bold text-stone-900 mb-2 border-b border-stone-100 pb-1">Indicativus Actief</h4>
+          <table class="w-full text-left"><tbody>${indActRows}</tbody></table>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm">
+          <h4 class="font-cinzel text-xs font-bold text-stone-900 mb-2 border-b border-stone-100 pb-1">Indicativus Passief</h4>
+          <table class="w-full text-left"><tbody>${indPassRows}</tbody></table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* QUIZ GENERATION WITH PLAUSIBLE DISTRACTORS */
+function startQuiz() {
+  if (appState.practiceType === 'words' && appState.selectedTopics.length === 0) {
+    showNotice('Selecteer minimaal één grammatica-rijtje om te oefenen.');
+    return;
+  }
+  generateQuestions(false);
+}
+
+function showNotice(msg) {
+  const box = document.getElementById('noticeBox');
+  if (box) {
+    box.innerText = msg;
+    box.classList.remove('hidden');
+    setTimeout(() => box.classList.add('hidden'), 3500);
+  }
+}
+
+function generateQuestions(isDaily = false) {
+  const mode = document.getElementById('quizInputType').value;
+  const questions = [];
+
+  if (appState.practiceType === 'words') {
+    const topics = isDaily ? getAvailableTopicsForLevel() : appState.selectedTopics;
+    const targetCount = isDaily ? 5 : 10;
+
+    for (let i = 0; i < targetCount; i++) {
+      const topicKey = topics[Math.floor(Math.random() * topics.length)];
+      let item = null;
+      for (let c in DATABASE) {
+        if (DATABASE[c][topicKey]) item = DATABASE[c][topicKey];
+      }
+      if (!item) continue;
+
+      const formKeys = Object.keys(item.forms);
+      const formKey = formKeys[Math.floor(Math.random() * formKeys.length)];
+      const rawForm = item.forms[formKey];
+      const correctVal = typeof rawForm === 'string' ? rawForm : rawForm.val;
+      const expl = typeof rawForm === 'object' ? rawForm.expl : `Correcte vorm voor ${formKey} van ${topicKey}.`;
+
+      // PLAUSIBLE DISTRACTORS FROM THE SAME WORD / CATEGORY
+      const distractors = [];
+      formKeys.forEach(fk => {
+        const val = typeof item.forms[fk] === 'string' ? item.forms[fk] : item.forms[fk].val;
+        if (val !== correctVal && !distractors.includes(val)) {
+          distractors.push(val);
         }
+      });
 
-        function toggleAudio() {
-            audioEnabled = !audioEnabled;
-            const btn = document.getElementById('audioBtn');
-            if (audioEnabled) {
-                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                btn.classList.remove('opacity-50');
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-                btn.classList.add('opacity-50');
+      // If not enough forms, pull from same category type
+      if (distractors.length < 3) {
+        for (let k in DATABASE[item.type]) {
+          const otherItem = DATABASE[item.type][k];
+          Object.values(otherItem.forms).forEach(fVal => {
+            const val = typeof fVal === 'string' ? fVal : fVal.val;
+            if (val !== correctVal && !distractors.includes(val)) {
+              distractors.push(val);
             }
+          });
         }
-
-        function playSound(type) {
-            if (!audioEnabled) return;
-            try {
-                const ctx = getAudioContext();
-                const now = ctx.currentTime;
-
-                if (type === 'correct') {
-                    const osc1 = ctx.createOscillator();
-                    const osc2 = ctx.createOscillator();
-                    const gain = ctx.createGain();
-
-                    osc1.type = 'sine';
-                    osc2.type = 'sine';
-                    osc1.frequency.setValueAtTime(523.25, now);
-                    osc2.frequency.setValueAtTime(659.25, now + 0.08);
-
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
-                    osc1.connect(gain);
-                    osc2.connect(gain);
-                    gain.connect(ctx.destination);
-
-                    osc1.start(now);
-                    osc2.start(now + 0.08);
-                    osc1.stop(now + 0.35);
-                    osc2.stop(now + 0.35);
-
-                } else if (type === 'wrong') {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(160, now);
-                    osc.frequency.exponentialRampToValueAtTime(110, now + 0.25);
-
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-
-                    osc.start(now);
-                    osc.stop(now + 0.25);
-
-                } else if (type === 'fanfare') {
-                    const notes = [523.25, 659.25, 783.99, 1046.50];
-                    notes.forEach((freq, i) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, now + i * 0.1);
-                        gain.gain.setValueAtTime(0.18, now + i * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.3);
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.start(now + i * 0.1);
-                        osc.stop(now + i * 0.1 + 0.3);
-                    });
-                }
-            } catch(e) {}
-        }
-
-        let appState = {
-            xp: 0,
-            streak: 1,
-            lastDailyDate: '',
-            level: 2,
-            practiceType: 'words',
-            activeTheme: 'default',
-            selectedModus: 'ind_act',
-            selectedTenses: {
-                ind_act: [],
-                ind_pass: [],
-                futurum: [],
-                conj_act: [],
-                conj_pass: [],
-                irregular: []
-            },
-            selectedTopics: ['filia', 'dominus', 'bellum', 'urbs', 'nomen', 'rex', 'salutare', 'terrere', 'audire', 'capio', 'bonus', 'fortis', 'is', 'hic', 'qui']
-        };
-
-        let currentQuiz = {
-            mode: 'mc',
-            questions: [],
-            currentIndex: 0,
-            score: 0,
-            selected: null,
-            state: 'answering',
-            isDaily: false,
-            usedHint: false
-        };
-
-        const DATABASE = {
-            noun: {
-                filia: {
-                    level: 1, title: 'filia (a-stam vrl.)', type: 'noun', groupName: 'a-stam', stem: 'fili-', forms: {
-                        'nom. enk.': 'filia', 'gen. enk.': 'filiae', 'dat. enk.': 'filiae', 'acc. enk.': 'filiam', 'abl. enk.': 'filia',
-                        'nom. mv.': 'filiae', 'gen. mv.': 'filiarum', 'dat. mv.': 'filiabus', 'acc. mv.': 'filias', 'abl. mv.': 'filiabus'
-                    }
-                },
-                dominus: {
-                    level: 1, title: 'dominus (o-stam us mnl.)', type: 'noun', groupName: 'o-stam (us)', stem: 'domin-', forms: {
-                        'nom. enk.': 'dominus', 'gen. enk.': 'domini', 'dat. enk.': 'domino', 'acc. enk.': 'dominum', 'abl. enk.': 'domino',
-                        'nom. mv.': 'domini', 'gen. mv.': 'dominorum', 'dat. mv.': 'dominis', 'acc. mv.': 'dominos', 'abl. mv.': 'dominis'
-                    }
-                },
-                bellum: {
-                    level: 1, title: 'bellum (o-stam um onz.)', type: 'noun', groupName: 'o-stam (um)', stem: 'bell-', forms: {
-                        'nom. enk.': 'bellum', 'gen. enk.': 'belli', 'dat. enk.': 'bello', 'acc. enk.': 'bellum', 'abl. enk.': 'bello',
-                        'nom. mv.': 'bella', 'gen. mv.': 'bellorum', 'dat. mv.': 'bellis', 'acc. mv.': 'bella', 'abl. mv.': 'bellis'
-                    }
-                },
-                urbs: {
-                    level: 2, title: 'urbs (3e groep vrl.)', type: 'noun', groupName: '3e groep', stem: 'urb-', forms: {
-                        'nom. enk.': 'urbs', 'gen. enk.': 'urbis', 'dat. enk.': 'urbi', 'acc. enk.': 'urbem', 'abl. enk.': 'urbe',
-                        'nom. mv.': 'urbes', 'gen. mv.': 'urbium', 'dat. mv.': 'urbibus', 'acc. mv.': 'urbes', 'abl. mv.': 'urbibus'
-                    }
-                },
-                nomen: {
-                    level: 2, title: 'nomen (3e groep onz.)', type: 'noun', groupName: '3e groep (onzijdig)', stem: 'nomin-', forms: {
-                        'nom. enk.': 'nomen', 'gen. enk.': 'nominis', 'dat. enk.': 'nomini', 'acc. enk.': 'nomen', 'abl. enk.': 'nomine',
-                        'nom. mv.': 'nomina', 'gen. mv.': 'nominum', 'dat. mv.': 'nominibus', 'acc. mv.': 'nomina', 'abl. mv.': 'nominibus'
-                    }
-                },
-                rex: {
-                    level: 2, title: 'rex (3e groep mnl.)', type: 'noun', groupName: '3e groep (m)', stem: 'reg-', forms: {
-                        'nom. enk.': 'rex', 'gen. enk.': 'regis', 'dat. enk.': 'regi', 'acc. enk.': 'regem', 'abl. enk.': 'rege',
-                        'nom. mv.': 'reges', 'gen. mv.': 'regum', 'dat. mv.': 'regibus', 'acc. mv.': 'reges', 'abl. mv.': 'regibus'
-                    }
-                },
-                manus: {
-                    level: 3, title: 'manus (u-stam vrl.)', type: 'noun', groupName: 'u-stam', stem: 'man-', forms: {
-                        'nom. enk.': 'manus', 'gen. enk.': 'manus', 'dat. enk.': 'manui', 'acc. enk.': 'manum', 'abl. enk.': 'manu',
-                        'nom. mv.': 'manus', 'gen. mv.': 'manuum', 'dat. mv.': 'manibus', 'acc. mv.': 'manus', 'abl. mv.': 'manibus'
-                    }
-                },
-                res: {
-                    level: 3, title: 'res (e-stam vrl.)', type: 'noun', groupName: 'e-stam', stem: 'r-', forms: {
-                        'nom. enk.': 'res', 'gen. enk.': 'rei', 'dat. enk.': 'rei', 'acc. enk.': 'rem', 'abl. enk.': 're',
-                        'nom. mv.': 'res', 'gen. mv.': 'rerum', 'dat. mv.': 'rebus', 'acc. mv.': 'res', 'abl. mv.': 'rebus'
-                    }
-                }
-            },
-            verb: {
-                salutare: {
-                    level: 1, title: 'salutare (a-stam)', type: 'verb', conjugation: '1e vervoeging (a-stam)', stem: 'salut-', forms: {
-                        f1: { name: 'praes. 1e pers. enk.', val: 'saluto', tense: 'praesens_act', expl: 'Stam + -o' },
-                        f2: { name: 'praes. 2e pers. enk.', val: 'salutas', tense: 'praesens_act', expl: 'Stam + -s' },
-                        f3: { name: 'praes. 3e pers. enk.', val: 'salutat', tense: 'praesens_act', expl: 'Stam + -t' },
-                        f4: { name: 'impf. 1e pers. enk.', val: 'salutabam', tense: 'imperfectum_act', expl: 'Kenletter -ba- + -m' },
-                        f5: { name: 'impf. 3e pers. enk.', val: 'salutabat', tense: 'imperfectum_act', expl: 'Kenletter -ba- + -t' },
-                        f6: { name: 'perf. 1e pers. enk.', val: 'salutavi', tense: 'perfectum_act', expl: 'v-stam + -i' },
-                        f7: { name: 'perf. 3e pers. enk.', val: 'salutavit', tense: 'perfectum_act', expl: 'v-stam + -it' },
-                        f8: { name: 'plusq. 1e pers. enk.', val: 'salutaveram', tense: 'plusquamperfectum_act', expl: 'v-stam + -eram' },
-                        f9: { name: 'futurum I 3e pers. enk.', val: 'salutabit', tense: 'futurum_act', expl: 'Kenletter -bi- + -t' },
-                        f12: { name: 'pass. praes. 3e pers. enk.', val: 'salutatur', tense: 'praesens_pass', expl: 'Stam + -tur' },
-                        f13: { name: 'pass. impf. 3e pers. enk.', val: 'salutabatur', tense: 'imperfectum_pass', expl: 'Kenletter -ba- + -tur' },
-                        f14: { name: 'pass. perf. 3e pers. enk.', val: 'salutatus est', tense: 'perfectum_pass', expl: 'PPP + est' },
-                        f15: { name: 'pass. plusq. 3e pers. enk.', val: 'salutatus erat', tense: 'plusquamperfectum_pass', expl: 'PPP + erat' }
-                    }
-                },
-                terrere: {
-                    level: 1, title: 'terrere (e-stam)', type: 'verb', conjugation: '2e vervoeging (e-stam)', stem: 'terr-', forms: {
-                        f1: { name: 'praes. 1e pers. enk.', val: 'terreo', tense: 'praesens_act', expl: 'Stam + -o' },
-                        f2: { name: 'praes. 3e pers. enk.', val: 'terret', tense: 'praesens_act', expl: 'Stam + -t' },
-                        f3: { name: 'impf. 1e pers. enk.', val: 'terrebam', tense: 'imperfectum_act', expl: 'Kenletter -ba- + -m' },
-                        f4: { name: 'perf. 1e pers. enk.', val: 'terrui', tense: 'perfectum_act', expl: 'u-stam + -i' }
-                    }
-                },
-                audire: {
-                    level: 2, title: 'audire (i-stam)', type: 'verb', conjugation: '4e vervoeging (i-stam)', stem: 'aud-', forms: {
-                        f1: { name: 'praes. 1e pers. enk.', val: 'audio', tense: 'praesens_act', expl: 'Stam + -o' },
-                        f2: { name: 'praes. 3e pers. enk.', val: 'audit', tense: 'praesens_act', expl: 'Stam + -t' },
-                        f3: { name: 'impf. 1e pers. enk.', val: 'audiebam', tense: 'imperfectum_act', expl: 'Bindklinker -e- + -bam' },
-                        f4: { name: 'perf. 1e pers. enk.', val: 'audivi', tense: 'perfectum_act', expl: 'v-stam + -i' }
-                    }
-                },
-                capio: {
-                    level: 2, title: 'capere (klinkerstam)', type: 'verb', conjugation: 'klinkerstam (gemengd)', stem: 'cap-', forms: {
-                        f1: { name: 'praes. 1e pers. enk.', val: 'capio', tense: 'praesens_act', expl: 'Stam met -i-' },
-                        f3: { name: 'perf. 1e pers. enk.', val: 'cepi', tense: 'perfectum_act', expl: 'Klinkerverandering a -> e' }
-                    }
-                }
-            },
-            adj: {
-                bonus: {
-                    level: 1, title: 'bonus, -a, -um', type: 'adj', groupName: 'a/o-stam', stem: 'bon-', forms: {
-                        'nom. mnl. enk.': 'bonus', 'nom. vrl. enk.': 'bona', 'nom. onz. enk.': 'bonum',
-                        'gen. mnl. enk.': 'boni', 'acc. vrl. enk.': 'bonam', 'nom. onz. mv.': 'bona'
-                    }
-                },
-                fortis: {
-                    level: 2, title: 'fortis, -e (3e groep)', type: 'adj', groupName: '3e groep', stem: 'fort-', forms: {
-                        'nom. mnl./vrl. enk.': 'fortis', 'nom. onz. enk.': 'forte', 'gen. enk.': 'fortis',
-                        'acc. mnl./vrl. enk.': 'fortem', 'nom. onz. mv.': 'fortia', 'gen. mv.': 'fortium'
-                    }
-                }
-            },
-            pronoun: {
-                is: {
-                    level: 2, title: 'is, ea, id', type: 'pronoun', groupName: 'Aanwijzend / Persoonlijk', stem: 'e-/i-', forms: {
-                        'nom. mnl. enk.': 'is', 'nom. vrl. enk.': 'ea', 'nom. onz. enk.': 'id', 'gen. enk.': 'eius'
-                    }
-                },
-                hic: {
-                    level: 2, title: 'hic, haec, hoc', type: 'pronoun', groupName: 'Aanwijzend voornaamwoord', stem: 'h-', forms: {
-                        'nom. mnl. enk.': 'hic', 'nom. vrl. enk.': 'haec', 'nom. onz. enk.': 'hoc', 'gen. enk.': 'huius'
-                    }
-                },
-                qui: {
-                    level: 2, title: 'qui, quae, quod', type: 'pronoun', groupName: 'Betrekkelijk voornaamwoord', stem: 'qu-', forms: {
-                        'nom. mnl. enk.': 'qui', 'nom. vrl. enk.': 'quae', 'nom. onz. enk.': 'quod', 'gen. enk.': 'cuius'
-                    }
-                }
-            }
-        };
-
-        const ENDINGS_DB = [
-            { level: 1, category: 'Praesens Actief', prompt: '1e pers. enk. (ik)', answer: '-o', expl: 'Standaard uitgang 1e pers. enk.' },
-            { level: 1, category: 'Praesens Actief', prompt: '2e pers. enk. (jij)', answer: '-s', expl: 'Standaard uitgang 2e pers. enk.' },
-            { level: 1, category: 'Praesens Actief', prompt: '3e pers. enk. (hij/zij)', answer: '-t', expl: 'Standaard uitgang 3e pers. enk.' },
-            { level: 1, category: 'Imperfectum', prompt: 'Kenletter imperfectum', answer: '-ba-', expl: 'Kenmerk van het imperfectum.' }
-        ];
-
-        const TENSES_MAP = {
-            ind_act: [
-                { id: 'praesens_act', label: 'Praesens Actief' },
-                { id: 'imperfectum_act', label: 'Imperfectum Actief' },
-                { id: 'perfectum_act', label: 'Perfectum Actief' },
-                { id: 'plusquamperfectum_act', label: 'Plusquamperfectum Actief' }
-            ],
-            ind_pass: [
-                { id: 'praesens_pass', label: 'Praesens Passief' },
-                { id: 'imperfectum_pass', label: 'Imperfectum Passief' },
-                { id: 'perfectum_pass', label: 'Perfectum Passief' },
-                { id: 'plusquamperfectum_pass', label: 'Plusquamperfectum Passief' }
-            ],
-            futurum: [
-                { id: 'futurum_act', label: 'Futurum Actief (I)' },
-                { id: 'futurum_pass', label: 'Futurum Passief (I)' },
-                { id: 'futurum_exactum', label: 'Futurum Exactum' }
-            ],
-            conj_act: [
-                { id: 'praesens_conj_act', label: 'Conjunctivus Praesens Actief' },
-                { id: 'imperfectum_conj_act', label: 'Conjunctivus Imperfectum Actief' },
-                { id: 'perfectum_conj_act', label: 'Conjunctivus Perfectum Actief' },
-                { id: 'plusquamperfectum_conj_act', label: 'Conjunctivus Plusquamperfectum Actief' }
-            ],
-            conj_pass: [
-                { id: 'praesens_conj_pass', label: 'Conjunctivus Praesens Passief' },
-                { id: 'imperfectum_conj_pass', label: 'Conjunctivus Imperfectum Passief' }
-            ],
-            irregular: [
-                { id: 'esse_praes', label: 'esse (zijn)' },
-                { id: 'posse_praes', label: 'posse (kunnen)' }
-            ]
-        };
-
-        /* COMPLETE COLLAPSIBLE GRAMMAR ACCORDION DEFINITIONS ACCORDING TO REQUIREMENTS */
-        const GRAMMAR_ACCORDION_DATA = [
-            // Substantiva & Adiectiva
-            { id: 'filia', label: 'filia', category: 'Zelfstandig Nw', subtitle: 'a-stam (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'filia', 'filiae'],
-                ['Genitivus', 'filiae', 'filiarum'],
-                ['Dativus', 'filiae', 'filiabus'],
-                ['Accusativus', 'filiam', 'filias'],
-                ['Ablativus', 'filia', 'filiabus']
-            ]},
-            { id: 'dominus', label: 'dominus', category: 'Zelfstandig Nw', subtitle: 'o-stam (mannelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'dominus', 'domini'],
-                ['Genitivus', 'domini', 'dominorum'],
-                ['Dativus', 'domino', 'dominis'],
-                ['Accusativus', 'dominum', 'dominos'],
-                ['Ablativus', 'domino', 'dominis']
-            ]},
-            { id: 'bellum', label: 'bellum', category: 'Zelfstandig Nw', subtitle: 'o-stam (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'bellum', 'bella'],
-                ['Genitivus', 'belli', 'bellorum'],
-                ['Dativus', 'bello', 'bellis'],
-                ['Accusativus', 'bellum', 'bella'],
-                ['Ablativus', 'bello', 'bellis']
-            ]},
-            { id: 'urbs', label: 'urbs', category: 'Zelfstandig Nw', subtitle: '3e groep (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'urbs', 'urbes'],
-                ['Genitivus', 'urbis', 'urbium'],
-                ['Dativus', 'urbi', 'urbibus'],
-                ['Accusativus', 'urbem', 'urbes'],
-                ['Ablativus', 'urbe', 'urbibus']
-            ]},
-            { id: 'nomen', label: 'nomen', category: 'Zelfstandig Nw', subtitle: '3e groep (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'nomen', 'nomina'],
-                ['Genitivus', 'nominis', 'nominum'],
-                ['Dativus', 'nomini', 'nominibus'],
-                ['Accusativus', 'nomen', 'nomina'],
-                ['Ablativus', 'nomine', 'nominibus']
-            ]},
-            { id: 'manus', label: 'manus', category: 'Zelfstandig Nw', subtitle: 'u-stam (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'manus', 'manus'],
-                ['Genitivus', 'manus', 'manuum'],
-                ['Dativus', 'manui', 'manibus'],
-                ['Accusativus', 'manum', 'manus'],
-                ['Ablativus', 'manu', 'manibus']
-            ]},
-            { id: 'res', label: 'res', category: 'Zelfstandig Nw', subtitle: 'e-stam (vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'res', 'res'],
-                ['Genitivus', 'rei', 'rerum'],
-                ['Dativus', 'rei', 'rebus'],
-                ['Accusativus', 'rem', 'res'],
-                ['Ablativus', 're', 'rebus']
-            ]},
-            { id: 'fortis_m_f', label: 'fortis mnl/vrl', category: 'Bijvoeglijk Nw', subtitle: '3e groep (mannelijk & vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'fortis', 'fortes'],
-                ['Genitivus', 'fortis', 'fortium'],
-                ['Dativus', 'forti', 'fortibus'],
-                ['Accusativus', 'fortem', 'fortes'],
-                ['Ablativus', 'forti', 'fortibus']
-            ]},
-            { id: 'fortis_n', label: 'fortis onz', category: 'Bijvoeglijk Nw', subtitle: '3e groep (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'forte', 'fortia'],
-                ['Genitivus', 'fortis', 'fortium'],
-                ['Dativus', 'forti', 'fortibus'],
-                ['Accusativus', 'forte', 'fortia'],
-                ['Ablativus', 'forti', 'fortibus']
-            ]},
-            { id: 'comp_m_f', label: 'comparativus mnl/vrl (altior)', category: 'Trappen van Vergelijking', subtitle: 'Vergrootrap (mannelijk & vrouwelijk)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'altior', 'altiores'],
-                ['Genitivus', 'altioris', 'altiorum'],
-                ['Dativus', 'altiori', 'altioribus'],
-                ['Accusativus', 'altiorem', 'altiores'],
-                ['Ablativus', 'altiore', 'altioribus']
-            ]},
-            { id: 'comp_n', label: 'comparativus onz (altior)', category: 'Trappen van Vergelijking', subtitle: 'Vergrootrap (onzijdig)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'altius', 'altiora'],
-                ['Genitivus', 'altioris', 'altiorum'],
-                ['Dativus', 'altiori', 'altioribus'],
-                ['Accusativus', 'altius', 'altiora'],
-                ['Ablativus', 'altiore', 'altioribus']
-            ]},
-            { id: 'superl_m', label: 'superlativus mnl', category: 'Trappen van Vergelijking', subtitle: 'Overtreffende trap (altissimus)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'altissimus', 'altissimi'],
-                ['Genitivus', 'altissimi', 'altissimorum'],
-                ['Dativus', 'altissimo', 'altissimis'],
-                ['Accusativus', 'altissimum', 'altissimos'],
-                ['Ablativus', 'altissimo', 'altissimis']
-            ]},
-            { id: 'superl_f', label: 'superlativus vrl', category: 'Trappen van Vergelijking', subtitle: 'Overtreffende trap (altissima)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'altissima', 'altissimae'],
-                ['Genitivus', 'altissimae', 'altissimarum'],
-                ['Dativus', 'altissimae', 'altissimis'],
-                ['Accusativus', 'altissimam', 'altissimas'],
-                ['Ablativus', 'altissima', 'altissimis']
-            ]},
-            { id: 'superl_n', label: 'superlativus onz', category: 'Trappen van Vergelijking', subtitle: 'Overtreffende trap (altissimum)', headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [
-                ['Nominativus', 'altissimum', 'altissima'],
-                ['Genitivus', 'altissimi', 'altissimorum'],
-                ['Dativus', 'altissimo', 'altissimis'],
-                ['Accusativus', 'altissimum', 'altissima'],
-                ['Ablativus', 'altissimo', 'altissimis']
-            ]},
-
-            // Pronomina (Voornaamwoorden)
-            { id: 'is_ea_id', label: 'is, ea, id', category: 'Voornaamwoord', subtitle: 'Aanwijzend / Persoonlijk (mnl, vrl, onz)', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'is', 'ii / ei'], ['Gen.', 'eius', 'eorum'], ['Dat.', 'ei', 'iis / eis'], ['Acc.', 'eum', 'eos'], ['Abl.', 'eo', 'iis / eis']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ea', 'eae'], ['Gen.', 'eius', 'earum'], ['Dat.', 'ei', 'iis / eis'], ['Acc.', 'eam', 'eas'], ['Abl.', 'ea', 'iis / eis']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'id', 'ea'], ['Gen.', 'eius', 'eorum'], ['Dat.', 'ei', 'iis / eis'], ['Acc.', 'id', 'ea'], ['Abl.', 'eo', 'iis / eis']] }
-            }},
-            { id: 'hic_haec_hoc', label: 'hic, haec, hoc', category: 'Voornaamwoord', subtitle: 'Aanwijzend (deze, dit)', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'hic', 'hi'], ['Gen.', 'huius', 'horum'], ['Dat.', 'huic', 'his'], ['Acc.', 'hunc', 'hos'], ['Abl.', 'hoc', 'his']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'haec', 'hae'], ['Gen.', 'huius', 'harum'], ['Dat.', 'huic', 'his'], ['Acc.', 'hanc', 'has'], ['Abl.', 'hac', 'his']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'hoc', 'haec'], ['Gen.', 'huius', 'horum'], ['Dat.', 'huic', 'his'], ['Acc.', 'hoc', 'haec'], ['Abl.', 'hoc', 'his']] }
-            }},
-            { id: 'ille_illa_illud', label: 'ille, illa, illud', category: 'Voornaamwoord', subtitle: 'Aanwijzend (die, dat)', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ille', 'illi'], ['Gen.', 'illius', 'illorum'], ['Dat.', 'illi', 'illis'], ['Acc.', 'illum', 'illos'], ['Abl.', 'illo', 'illis']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'illa', 'illae'], ['Gen.', 'illius', 'illarum'], ['Dat.', 'illi', 'illis'], ['Acc.', 'illam', 'illas'], ['Abl.', 'illa', 'illis']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'illud', 'illa'], ['Gen.', 'illius', 'illorum'], ['Dat.', 'illi', 'illis'], ['Acc.', 'illud', 'illa'], ['Abl.', 'illo', 'illis']] }
-            }},
-            { id: 'ipse_ipsa_ipsum', label: 'ipse, ipsa, ipsum', category: 'Voornaamwoord', subtitle: 'Zelf / Zelfs', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ipse', 'ipsi'], ['Gen.', 'ipsius', 'ipsorum'], ['Dat.', 'ipsi', 'ipsis'], ['Acc.', 'ipsum', 'ipsos'], ['Abl.', 'ipso', 'ipsis']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ipsa', 'ipsae'], ['Gen.', 'ipsius', 'ipsarum'], ['Dat.', 'ipsi', 'ipsis'], ['Acc.', 'ipsam', 'ipsas'], ['Abl.', 'ipsa', 'ipsis']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'ipsum', 'ipsa'], ['Gen.', 'ipsius', 'ipsorum'], ['Dat.', 'ipsi', 'ipsis'], ['Acc.', 'ipsum', 'ipsa'], ['Abl.', 'ipso', 'ipsis']] }
-            }},
-            { id: 'idem_eadem_idem', label: 'idem, eadem, idem', category: 'Voornaamwoord', subtitle: 'Aanwijzend (dezelfde, hetzelfde)', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'idem', 'iidem / eidem'], ['Gen.', 'eiusdem', 'eorundem'], ['Dat.', 'eidem', 'iisdem / eisdem'], ['Acc.', 'eundem', 'eosdem'], ['Abl.', 'eodem', 'iisdem / eisdem']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'eadem', 'eaedem'], ['Gen.', 'eiusdem', 'earundem'], ['Dat.', 'eidem', 'iisdem / eisdem'], ['Acc.', 'eandem', 'easdem'], ['Abl.', 'eadem', 'iisdem / eisdem']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'idem', 'eadem'], ['Gen.', 'eiusdem', 'eorundem'], ['Dat.', 'eidem', 'iisdem / eisdem'], ['Acc.', 'idem', 'eadem'], ['Abl.', 'eodem', 'iisdem / eisdem']] }
-            }},
-            { id: 'ego', label: 'ego', category: 'Voornaamwoord', subtitle: 'Persoonlijk (ik)', headers: ['Naamval', 'Vorm'], rows: [
-                ['Nominativus', 'ego (ik)'],
-                ['Genitivus', 'mei (van mij)'],
-                ['Dativus', 'mihi (aan/voor mij)'],
-                ['Accusativus', 'me (mij)'],
-                ['Ablativus', 'me (door/van mij)']
-            ]},
-            { id: 'tu', label: 'tu', category: 'Voornaamwoord', subtitle: 'Persoonlijk (jij)', headers: ['Naamval', 'Vorm'], rows: [
-                ['Nominativus', 'tu (jij)'],
-                ['Genitivus', 'tui (van jou)'],
-                ['Dativus', 'tibi (aan/voor jou)'],
-                ['Accusativus', 'te (jou)'],
-                ['Ablativus', 'te (door/van jou)']
-            ]},
-            { id: 'sui', label: 'sui', category: 'Voornaamwoord', subtitle: 'Wederkerend (zichzelf - enk. & mv. gelijk)', headers: ['Naamval', 'Vorm'], rows: [
-                ['Nominativus', '— (geen nom.)'],
-                ['Genitivus', 'sui (van zich)'],
-                ['Dativus', 'sibi (aan/voor zich)'],
-                ['Accusativus', 'se (zich)'],
-                ['Ablativus', 'se (door/van zich)']
-            ]},
-            { id: 'nos', label: 'nos', category: 'Voornaamwoord', subtitle: 'Persoonlijk (wij)', headers: ['Naamval', 'Vorm'], rows: [
-                ['Nominativus', 'nos (wij)'],
-                ['Genitivus', 'nostri / nostrum (van ons)'],
-                ['Dativus', 'nobis (aan/voor ons)'],
-                ['Accusativus', 'nos (ons)'],
-                ['Ablativus', 'nobis (door/van ons)']
-            ]},
-            { id: 'vos', label: 'vos', category: 'Voornaamwoord', subtitle: 'Persoonlijk (jullie)', headers: ['Naamval', 'Vorm'], rows: [
-                ['Nominativus', 'vos (jullie)'],
-                ['Genitivus', 'vestri / vestrum (van jullie)'],
-                ['Dativus', 'vobis (aan/voor jullie)'],
-                ['Accusativus', 'vos (jullie)'],
-                ['Ablativus', 'vobis (door/van jullie)']
-            ]},
-            { id: 'qui_quae_quod', label: 'qui, quae, quod', category: 'Voornaamwoord', subtitle: 'Betrekkelijk (die, dat, wie, wat)', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'qui', 'qui'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quem', 'quos'], ['Abl.', 'quo', 'quibus']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quae', 'quae'], ['Gen.', 'cuius', 'quarum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quam', 'quas'], ['Abl.', 'qua', 'quibus']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quod', 'quae'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quod', 'quae'], ['Abl.', 'quo', 'quibus']] }
-            }},
-            { id: 'quis_quod', label: 'quis, quod / quis, quid', category: 'Voornaamwoord', subtitle: 'Vragend voornaamwoord (wie, wat)', genderTabs: true, tables: {
-                mnl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quis', 'qui'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quem', 'quos'], ['Abl.', 'quo', 'quibus']] },
-                vrl: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quis', 'quae'], ['Gen.', 'cuius', 'quarum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quam', 'quas'], ['Abl.', 'qua', 'quibus']] },
-                onz: { headers: ['Naamval', 'Enkelvoud', 'Meervoud'], rows: [['Nom.', 'quid / quod', 'quae'], ['Gen.', 'cuius', 'quorum'], ['Dat.', 'cui', 'quibus'], ['Acc.', 'quid / quod', 'quae'], ['Abl.', 'quo', 'quibus']] }
-            }},
-
-            // Verba (Werkwoordstijden met Actief/Passief + Conjunctivus)
-            { id: 'praesens', label: 'praesens', category: 'Werkwoordstijd', subtitle: 'Onvoltooid Tegenwoordige Tijd (salutare)', isVerbTense: true, verbData: {
-                ind: {
-                    act: [['1e enk. (ik)', 'saluto'], ['2e enk. (jij)', 'salutas'], ['3e enk. (hij/zij)', 'salutat'], ['1e mv. (wij)', 'salutamus'], ['2e mv. (jullie)', 'salutatis'], ['3e mv. (zij)', 'salutant']],
-                    pass: [['1e enk. (ik)', 'salutor'], ['2e enk. (jij)', 'salutaris'], ['3e enk. (hij/zij)', 'salutatur'], ['1e mv. (wij)', 'salutamur'], ['2e mv. (jullie)', 'salutamini'], ['3e mv. (zij)', 'salutantur']]
-                },
-                conj: {
-                    act: [['1e enk.', 'salutem'], ['2e enk.', 'salutes'], ['3e enk.', 'salutet'], ['1e mv.', 'salutemus'], ['2e mv.', 'salutetis'], ['3e mv.', 'salutent']],
-                    pass: [['1e enk.', 'saluter'], ['2e enk.', 'saluteris'], ['3e enk.', 'salutetur'], ['1e mv.', 'salutemur'], ['2e mv.', 'salutemini'], ['3e mv.', 'salutentur']]
-                }
-            }},
-            { id: 'imperfectum', label: 'imperfectum', category: 'Werkwoordstijd', subtitle: 'Onvoltooid Verleden Tijd (salutare)', isVerbTense: true, verbData: {
-                ind: {
-                    act: [['1e enk.', 'salutabam'], ['2e enk.', 'salutabas'], ['3e enk.', 'salutabat'], ['1e mv.', 'salutabamus'], ['2e mv.', 'salutabatis'], ['3e mv.', 'salutabant']],
-                    pass: [['1e enk.', 'salutabar'], ['2e enk.', 'salutabaris'], ['3e enk.', 'salutabatur'], ['1e mv.', 'salutabamur'], ['2e mv.', 'salutabamini'], ['3e mv.', 'salutabantur']]
-                },
-                conj: {
-                    act: [['1e enk.', 'salutarem'], ['2e enk.', 'salutares'], ['3e enk.', 'salutaret'], ['1e mv.', 'salutaremus'], ['2e mv.', 'salutaretis'], ['3e mv.', 'salutarent']],
-                    pass: [['1e enk.', 'salutarer'], ['2e enk.', 'salutareris'], ['3e enk.', 'salutaretur'], ['1e mv.', 'salutaremur'], ['2e mv.', 'salutaremini'], ['3e mv.', 'salutarentur']]
-                }
-            }},
-            { id: 'perfectum', label: 'perfectum', category: 'Werkwoordstijd', subtitle: 'Voltooid Tegenwoordige Tijd (salutare)', isVerbTense: true, verbData: {
-                ind: {
-                    act: [['1e enk.', 'salutavi'], ['2e enk.', 'salutavisti'], ['3e enk.', 'salutavit'], ['1e mv.', 'salutavimus'], ['2e mv.', 'salutavistis'], ['3e mv.', 'salutaverunt']],
-                    pass: [['1e enk.', 'salutatus sum'], ['2e enk.', 'salutatus es'], ['3e enk.', 'salutatus est'], ['1e mv.', 'salutati sumus'], ['2e mv.', 'salutati estis'], ['3e mv.', 'salutati sunt']]
-                },
-                conj: {
-                    act: [['1e enk.', 'salutaverim'], ['2e enk.', 'salutaveris'], ['3e enk.', 'salutaverit'], ['1e mv.', 'salutaverimus'], ['2e mv.', 'salutaveritis'], ['3e mv.', 'salutaverint']],
-                    pass: [['1e enk.', 'salutatus sim'], ['2e enk.', 'salutatus sis'], ['3e enk.', 'salutatus sit'], ['1e mv.', 'salutati simus'], ['2e mv.', 'salutati sitis'], ['3e mv.', 'salutati sint']]
-                }
-            }},
-            { id: 'plusquamperf', label: 'plusquamperf.', category: 'Werkwoordstijd', subtitle: 'Voltooid Verleden Tijd (salutare)', isVerbTense: true, verbData: {
-                ind: {
-                    act: [['1e enk.', 'salutaveram'], ['2e enk.', 'salutaveras'], ['3e enk.', 'salutaverat'], ['1e mv.', 'salutaveramus'], ['2e mv.', 'salutaveratis'], ['3e mv.', 'salutaverant']],
-                    pass: [['1e enk.', 'salutatus eram'], ['2e enk.', 'salutatus eras'], ['3e enk.', 'salutatus erat'], ['1e mv.', 'salutati eramus'], ['2e mv.', 'salutati eratis'], ['3e mv.', 'salutati erant']]
-                },
-                conj: {
-                    act: [['1e enk.', 'salutavisset'], ['2e enk.', 'salutavisses'], ['3e enk.', 'salutavisset'], ['1e mv.', 'salutavissemus'], ['2e mv.', 'salutavissetis'], ['3e mv.', 'salutavissent']],
-                    pass: [['1e enk.', 'salutatus essem'], ['2e enk.', 'salutatus esses'], ['3e enk.', 'salutatus esset'], ['1e mv.', 'salutati essemus'], ['2e mv.', 'salutati essetis'], ['3e mv.', 'salutati essent']]
-                }
-            }},
-            { id: 'futurum', label: 'futurum', category: 'Werkwoordstijd', subtitle: 'Onvoltooid Toekomende Tijd (salutare)', isVerbTense: true, verbData: {
-                ind: {
-                    act: [['1e enk.', 'salutabo'], ['2e enk.', 'salutabis'], ['3e enk.', 'salutabit'], ['1e mv.', 'salutabimus'], ['2e mv.', 'salutabitis'], ['3e mv.', 'salutabunt']],
-                    pass: [['1e enk.', 'salutabor'], ['2e enk.', 'salutaberis'], ['3e enk.', 'salutabitur'], ['1e mv.', 'salutabimur'], ['2e mv.', 'salutabimini'], ['3e mv.', 'salutabuntur']]
-                },
-                conj: null // Futurum heeft geen directe conjunctivusvorm
-            }},
-            { id: 'futurum_exactum', label: 'futurum exactum', category: 'Werkwoordstijd', subtitle: 'Voltooid Toekomende Tijd (salutare)', isVerbTense: true, verbData: {
-                ind: {
-                    act: [['1e enk.', 'salutavero'], ['2e enk.', 'salutaveris'], ['3e enk.', 'salutaverit'], ['1e mv.', 'salutaverimus'], ['2e mv.', 'salutaveritis'], ['3e mv.', 'salutaverint']],
-                    pass: [['1e enk.', 'salutatus ero'], ['2e enk.', 'salutatus eris'], ['3e enk.', 'salutatus erit'], ['1e mv.', 'salutati erimus'], ['2e mv.', 'salutati eritis'], ['3e mv.', 'salutati erunt']]
-                },
-                conj: null
-            }}
-        ];
-
-        function loadProgress() {
-            try {
-                const saved = localStorage.getItem('schola_latina_progress');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    appState.xp = parsed.xp || 0;
-                    appState.streak = parsed.streak || 1;
-                    appState.level = parsed.level || 2;
-                    appState.activeTheme = parsed.activeTheme || 'default';
-                    appState.lastDailyDate = parsed.lastDailyDate || '';
-                }
-            } catch (e) {}
-            sanitizeSelectedTopicsByLevel();
-            updateRankAndThemeUI();
-        }
-
-        function saveProgress() {
-            try {
-                localStorage.setItem('schola_latina_progress', JSON.stringify({
-                    xp: appState.xp,
-                    streak: appState.streak,
-                    level: appState.level,
-                    activeTheme: appState.activeTheme,
-                    lastDailyDate: appState.lastDailyDate
-                }));
-            } catch(e) {}
-        }
-
-        function sanitizeSelectedTopicsByLevel() {
-            appState.selectedTopics = appState.selectedTopics.filter(t => {
-                for (let c in DATABASE) {
-                    if (DATABASE[c][t]) return DATABASE[c][t].level <= appState.level;
-                }
-                return false;
-            });
-        }
-
-        function updateRankAndThemeUI() {
-            const levelSelect = document.getElementById('levelSelect');
-            if (levelSelect) levelSelect.value = appState.level;
-
-            const activeLevelBadge = document.getElementById('activeLevelBadge');
-            if (activeLevelBadge) activeLevelBadge.innerText = `Klas ${appState.level}`;
-
-            const dailyLevelLabel = document.getElementById('dailyLevelLabel');
-            if (dailyLevelLabel) dailyLevelLabel.innerText = `Klas ${appState.level}`;
-
-            const xp = appState.xp;
-            let rank = 'Tiro';
-            let icon = 'fa-shield';
-            let nextXp = 100;
-            let currentBase = 0;
-
-            if (xp >= 1000) {
-                rank = 'Consul / Imperator';
-                icon = 'fa-crown';
-                nextXp = 1000;
-                currentBase = 1000;
-            } else if (xp >= 600) {
-                rank = 'Tribunus';
-                icon = 'fa-chess-knight';
-                nextXp = 1000;
-                currentBase = 600;
-            } else if (xp >= 300) {
-                rank = 'Centurio';
-                icon = 'fa-user-shield';
-                nextXp = 600;
-                currentBase = 300;
-            } else if (xp >= 100) {
-                rank = 'Legionarius';
-                icon = 'fa-helmet-safety';
-                nextXp = 300;
-                currentBase = 100;
-            }
-
-            document.getElementById('rankTitle').innerText = rank;
-            document.getElementById('rankIcon').className = `fa-solid ${icon} text-amber-400`;
-            document.getElementById('xpCounter').innerText = `${xp} XP`;
-            document.getElementById('streakCounter').innerText = `${appState.streak} Dag${appState.streak > 1 ? 'en' : ''}`;
-
-            let pct = 100;
-            if (nextXp > currentBase) {
-                pct = Math.min(100, Math.max(0, ((xp - currentBase) / (nextXp - currentBase)) * 100));
-            }
-            document.getElementById('rankProgressBar').style.width = `${pct}%`;
-
-            const btnPurple = document.getElementById('btnThemePurple');
-            const btnPompeii = document.getElementById('btnThemePompeii');
-            const btnLaurel = document.getElementById('btnThemeLaurel');
-
-            if (btnPurple && xp >= 100) {
-                btnPurple.disabled = false;
-                btnPurple.className = "w-full py-1.5 bg-purple-900 text-white rounded-lg text-xs font-bold hover:opacity-90";
-                btnPurple.innerText = appState.activeTheme === 'purple' ? 'Actief' : 'Kiezen';
-            }
-            if (btnPompeii && xp >= 300) {
-                btnPompeii.disabled = false;
-                btnPompeii.className = "w-full py-1.5 bg-red-900 text-white rounded-lg text-xs font-bold hover:opacity-90";
-                btnPompeii.innerText = appState.activeTheme === 'pompeii' ? 'Actief' : 'Kiezen';
-            }
-            if (btnLaurel && xp >= 600) {
-                btnLaurel.disabled = false;
-                btnLaurel.className = "w-full py-1.5 bg-emerald-800 text-white rounded-lg text-xs font-bold hover:opacity-90";
-                btnLaurel.innerText = appState.activeTheme === 'laurel' ? 'Actief' : 'Kiezen';
-            }
-
-            applyTheme(appState.activeTheme, false);
-            updateDailyStatusBox();
-        }
-
-        function applyTheme(themeName, save = true) {
-            document.body.classList.remove('theme-purple', 'theme-pompeii', 'theme-laurel');
-            if (themeName !== 'default') document.body.classList.add(`theme-${themeName}`);
-            appState.activeTheme = themeName;
-            if (save) saveProgress();
-        }
-
-        function changeLevel() {
-            appState.level = parseInt(document.getElementById('levelSelect').value);
-            sanitizeSelectedTopicsByLevel();
-            saveProgress();
-            updateRankAndThemeUI();
-            renderTopicsGrid();
-        }
-
-        function filterCategory(cat) {
-            if (cat === 'all') {
-                const allKeys = [];
-                for (let c in DATABASE) {
-                    for (let k in DATABASE[c]) {
-                        if (DATABASE[c][k].level <= appState.level) allKeys.push(k);
-                    }
-                }
-                appState.selectedTopics = allKeys;
-            } else if (cat === 'none') {
-                appState.selectedTopics = [];
-            } else if (DATABASE[cat]) {
-                const keys = Object.keys(DATABASE[cat]).filter(k => DATABASE[cat][k].level <= appState.level);
-                const allSelected = keys.length > 0 && keys.every(k => appState.selectedTopics.includes(k));
-                
-                if (allSelected) {
-                    appState.selectedTopics = appState.selectedTopics.filter(k => !keys.includes(k));
-                } else {
-                    keys.forEach(k => {
-                        if (!appState.selectedTopics.includes(k)) appState.selectedTopics.push(k);
-                    });
-                }
-            }
-            renderTopicsGrid();
-        }
-
-        function renderTopicsGrid() {
-            const grid = document.getElementById('topicsGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            for (let catKey in DATABASE) {
-                for (let itemKey in DATABASE[catKey]) {
-                    const item = DATABASE[catKey][itemKey];
-                    if (item.level > appState.level) continue;
-
-                    const isSelected = appState.selectedTopics.includes(itemKey);
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.onclick = () => toggleTopicSelection(itemKey);
-                    btn.className = `p-3 rounded-xl border-2 text-left transition flex items-center justify-between ${
-                        isSelected ? 'btn-selected' : 'border-stone-200 bg-white text-stone-600 hover:border-roman-gold hover:bg-stone-50'
-                    }`;
-
-                    btn.innerHTML = `
-                        <div>
-                            <span class="font-bold text-xs sm:text-sm block text-stone-900">${item.title}</span>
-                            <span class="text-[10px] text-stone-500 uppercase tracking-wider">${catKey} • Klas ${item.level}</span>
-                        </div>
-                        <div class="w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold ${
-                            isSelected ? 'bg-roman-gold text-white shadow-sm' : 'bg-stone-100 text-transparent border border-stone-300'
-                        }">
-                            <i class="fa-solid fa-check"></i>
-                        </div>
-                    `;
-                    grid.appendChild(btn);
-                }
-            }
-
-            const countEl = document.getElementById('selectionCountText');
-            if (countEl) {
-                countEl.innerText = `Geselecteerd: ${appState.selectedTopics.length} grammatica-rijtjes (Niveau Klas ${appState.level})`;
-            }
-        }
-
-        function toggleTopicSelection(key) {
-            const idx = appState.selectedTopics.indexOf(key);
-            if (idx > -1) appState.selectedTopics.splice(idx, 1);
-            else appState.selectedTopics.push(key);
-            renderTopicsGrid();
-        }
-
-        function setPracticeMode(mode) {
-            appState.practiceType = mode;
-            const btnWords = document.getElementById('modeTypeWord');
-            const btnEndings = document.getElementById('modeTypeEnding');
-
-            if (mode === 'words') {
-                btnWords.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition btn-selected";
-                btnEndings.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition";
-            } else {
-                btnEndings.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition btn-selected";
-                btnWords.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-300 hover:text-white transition";
-            }
-        }
-
-        function switchTab(tab) {
-            ['tabPractice', 'tabLibrary', 'tabDaily', 'tabRewards'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-
-            ['tabBtnPractice', 'tabBtnLibrary', 'tabBtnDaily', 'tabBtnRewards'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.remove('active-tab');
-            });
-
-            if (tab === 'practice') {
-                document.getElementById('tabPractice').classList.remove('hidden');
-                document.getElementById('tabBtnPractice').classList.add('active-tab');
-            } else if (tab === 'library') {
-                document.getElementById('tabLibrary').classList.remove('hidden');
-                document.getElementById('tabBtnLibrary').classList.add('active-tab');
-                renderGrammarAccordion();
-            } else if (tab === 'daily') {
-                document.getElementById('tabDaily').classList.remove('hidden');
-                document.getElementById('tabBtnDaily').classList.add('active-tab');
-                updateDailyStatusBox();
-            } else if (tab === 'rewards') {
-                document.getElementById('tabRewards').classList.remove('hidden');
-                document.getElementById('tabBtnRewards').classList.add('active-tab');
-            }
-        }
-
-        /* RENDERING GRAMMATICA OVERZICHT WITH EXPANDABLE BUTTONS */
-        function renderGrammarAccordion() {
-            const container = document.getElementById('accordionContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            GRAMMAR_ACCORDION_DATA.forEach(item => {
-                const card = document.createElement('div');
-                card.id = `accCard_${item.id}`;
-                card.className = "accordion-item border border-stone-200 rounded-2xl bg-white shadow-sm overflow-hidden transition";
-
-                // Button Header
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = "w-full p-4 text-left font-bold flex items-center justify-between hover:bg-amber-50/60 transition group";
-                btn.onclick = () => toggleAccordionItem(item.id);
-
-                btn.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-roman-goldDark flex items-center justify-center font-bold text-sm group-hover:scale-105 transition">
-                            <i class="fa-solid ${item.isVerbTense ? 'fa-bolt' : 'fa-list-ol'}"></i>
-                        </div>
-                        <div>
-                            <span class="font-cinzel text-base text-stone-900 block font-black">${item.label}</span>
-                            <span class="text-[11px] text-stone-500 font-medium">${item.category} • ${item.subtitle}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs text-roman-goldDark font-semibold hidden sm:inline">Bekijk rijtje</span>
-                        <i id="accIcon_${item.id}" class="fa-solid fa-chevron-down text-stone-400 group-hover:text-roman-gold text-sm transition-transform duration-200"></i>
-                    </div>
-                `;
-
-                // Collapsible Content Box
-                const contentBox = document.createElement('div');
-                contentBox.id = `accContent_${item.id}`;
-                contentBox.className = "hidden border-t border-stone-100 p-4 bg-stone-50/50 space-y-4";
-
-                if (item.isVerbTense) {
-                    contentBox.innerHTML = generateVerbTenseHTML(item);
-                } else if (item.genderTabs) {
-                    contentBox.innerHTML = generateGenderTabsHTML(item);
-                } else {
-                    contentBox.innerHTML = generateStandardTableHTML(item.headers, item.rows);
-                }
-
-                card.appendChild(btn);
-                card.appendChild(contentBox);
-                container.appendChild(card);
-            });
-        }
-
-        function generateStandardTableHTML(headers, rows) {
-            let hHtml = headers.map(h => `<th class="py-2 px-3 text-stone-600 font-cinzel text-xs uppercase tracking-wider border-b border-stone-200">${h}</th>`).join('');
-            let rHtml = rows.map(r => `
-                <tr class="border-b border-stone-200/60 hover:bg-amber-50/40 transition">
-                    <td class="py-2 px-3 font-medium text-stone-500 text-xs">${r[0]}</td>
-                    <td class="py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[1] || ''}</td>
-                    ${r[2] !== undefined ? `<td class="py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[2]}</td>` : ''}
-                </tr>
-            `).join('');
-
-            return `
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left bg-white rounded-xl border border-stone-200 overflow-hidden">
-                        <thead class="bg-stone-100/80"><tr>${hHtml}</tr></thead>
-                        <tbody>${rHtml}</tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        function generateGenderTabsHTML(item) {
-            const mnlTable = generateStandardTableHTML(item.tables.mnl.headers, item.tables.mnl.rows);
-            const vrlTable = generateStandardTableHTML(item.tables.vrl.headers, item.tables.vrl.rows);
-            const onzTable = generateStandardTableHTML(item.tables.onz.headers, item.tables.onz.rows);
-
-            return `
-                <div class="space-y-3">
-                    <div class="flex space-x-2 border-b border-stone-200 pb-2 text-xs font-bold">
-                        <button onclick="switchGenderSubTab('${item.id}', 'mnl')" id="btnG_${item.id}_mnl" class="px-3 py-1.5 rounded-lg bg-roman-gold text-white shadow-sm">Mannelijk</button>
-                        <button onclick="switchGenderSubTab('${item.id}', 'vrl')" id="btnG_${item.id}_vrl" class="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200">Vrouwelijk</button>
-                        <button onclick="switchGenderSubTab('${item.id}', 'onz')" id="btnG_${item.id}_onz" class="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200">Onzijdig</button>
-                    </div>
-                    <div id="tabG_${item.id}_mnl">${mnlTable}</div>
-                    <div id="tabG_${item.id}_vrl" class="hidden">${vrlTable}</div>
-                    <div id="tabG_${item.id}_onz" class="hidden">${onzTable}</div>
-                </div>
-            `;
-        }
-
-        function generateVerbTenseHTML(item) {
-            const vData = item.verbData;
-            const hasConj = vData.conj !== null;
-
-            let indActRows = vData.ind.act.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
-            let indPassRows = vData.ind.pass.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
-
-            let conjSectionHtml = '';
-            if (hasConj) {
-                let conjActRows = vData.conj.act.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-purple">${r[1]}</td></tr>`).join('');
-                let conjPassRows = vData.conj.pass.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-purple">${r[1]}</td></tr>`).join('');
-
-                conjSectionHtml = `
-                    <div id="boxConj_${item.id}" class="hidden space-y-3 pt-2">
-                        <div class="text-xs font-bold uppercase tracking-wider text-purple-900 border-b border-purple-200 pb-1">Conjunctivus (Aanvoegende Wijs):</div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-purple-50/50 p-3 rounded-xl border border-purple-200">
-                                <h4 class="font-cinzel text-xs font-bold text-purple-900 mb-2">Conjunctivus Actief</h4>
-                                <table class="w-full text-left"><tbody>${conjActRows}</tbody></table>
-                            </div>
-                            <div class="bg-purple-50/50 p-3 rounded-xl border border-purple-200">
-                                <h4 class="font-cinzel text-xs font-bold text-purple-900 mb-2">Conjunctivus Passief</h4>
-                                <table class="w-full text-left"><tbody>${conjPassRows}</tbody></table>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            return `
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between border-b border-stone-200 pb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-roman-goldDark">Indicativus (Aantonende Wijs)</span>
-                        ${hasConj ? `
-                            <button onclick="toggleConjView('${item.id}')" id="btnToggleConj_${item.id}" class="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 rounded-lg text-xs font-bold transition flex items-center space-x-1">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                <span>Toon Conjunctivus Optie</span>
-                            </button>
-                        ` : '<span class="text-[10px] text-stone-400 italic">Geen conjunctivus in deze tijd</span>'}
-                    </div>
-
-                    <!-- Indicativus Actief & Passief Naast/Onder elkaar -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm">
-                            <h4 class="font-cinzel text-xs font-bold text-stone-900 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
-                                <span>Actief</span>
-                                <i class="fa-solid fa-sword text-stone-400 text-xs"></i>
-                            </h4>
-                            <table class="w-full text-left"><tbody>${indActRows}</tbody></table>
-                        </div>
-                        <div class="bg-white p-3 rounded-xl border border-stone-200 shadow-sm">
-                            <h4 class="font-cinzel text-xs font-bold text-stone-900 mb-2 border-b border-stone-100 pb-1 flex items-center justify-between">
-                                <span>Passief</span>
-                                <i class="fa-solid fa-shield text-stone-400 text-xs"></i>
-                            </h4>
-                            <table class="w-full text-left"><tbody>${indPassRows}</tbody></table>
-                        </div>
-                    </div>
-
-                    ${conjSectionHtml}
-                </div>
-            `;
-        }
-
-        function toggleAccordionItem(id) {
-            const content = document.getElementById(`accContent_${id}`);
-            const icon = document.getElementById(`accIcon_${id}`);
-
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                if (icon) icon.className = "fa-solid fa-chevron-up text-roman-gold text-sm transition-transform duration-200";
-            } else {
-                content.classList.add('hidden');
-                if (icon) icon.className = "fa-solid fa-chevron-down text-stone-400 text-sm transition-transform duration-200";
-            }
-        }
-
-        function switchGenderSubTab(itemId, gender) {
-            ['mnl', 'vrl', 'onz'].forEach(g => {
-                const tab = document.getElementById(`tabG_${itemId}_${g}`);
-                const btn = document.getElementById(`btnG_${itemId}_${g}`);
-                if (tab && btn) {
-                    if (g === gender) {
-                        tab.classList.remove('hidden');
-                        btn.className = "px-3 py-1.5 rounded-lg bg-roman-gold text-white shadow-sm font-bold";
-                    } else {
-                        tab.classList.add('hidden');
-                        btn.className = "px-3 py-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 font-bold";
-                    }
-                }
-            });
-        }
-
-        function toggleConjView(itemId) {
-            const box = document.getElementById(`boxConj_${itemId}`);
-            const btn = document.getElementById(`btnToggleConj_${itemId}`);
-
-            if (box) {
-                if (box.classList.contains('hidden')) {
-                    box.classList.remove('hidden');
-                    if (btn) btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span>Verberg Conjunctivus</span>';
-                } else {
-                    box.classList.add('hidden');
-                    if (btn) btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Toon Conjunctivus Optie</span>';
-                }
-            }
-        }
-
-        function expandAllAccordion(expand) {
-            GRAMMAR_ACCORDION_DATA.forEach(item => {
-                const content = document.getElementById(`accContent_${item.id}`);
-                const icon = document.getElementById(`accIcon_${item.id}`);
-
-                if (content) {
-                    if (expand) {
-                        content.classList.remove('hidden');
-                        if (icon) icon.className = "fa-solid fa-chevron-up text-roman-gold text-sm";
-                    } else {
-                        content.classList.add('hidden');
-                        if (icon) icon.className = "fa-solid fa-chevron-down text-stone-400 text-sm";
-                    }
-                }
-            });
-        }
-
-        function filterAccordionItems() {
-            const query = (document.getElementById('librarySearchInput').value || '').toLowerCase();
-            GRAMMAR_ACCORDION_DATA.forEach(item => {
-                const card = document.getElementById(`accCard_${item.id}`);
-                if (card) {
-                    const text = `${item.label} ${item.category} ${item.subtitle}`.toLowerCase();
-                    if (text.includes(query)) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                }
-            });
-        }
-
-        function toggleModusDropdown(modus) {
-            appState.selectedModus = modus;
-            renderTensesDropdown();
-        }
-
-        function renderTensesDropdown() {
-            const modus = appState.selectedModus;
-            document.getElementById('dropdownTitle').innerText = `Selecteer Tijden voor ${modus.toUpperCase().replace('_', ' ')}:`;
-
-            const modusKeys = ['ind_act', 'ind_pass', 'futurum', 'conj_act', 'conj_pass', 'irregular'];
-            modusKeys.forEach(m => {
-                const btnId = `btnModus${m.charAt(0).toUpperCase() + m.slice(1)}`.replace('_a', 'A').replace('_p', 'P');
-                const btn = document.getElementById(btnId);
-                const badge = document.getElementById(`badge${m.charAt(0).toUpperCase() + m.slice(1)}`.replace('_a', 'A').replace('_p', 'P'));
-                
-                const selectedCount = (appState.selectedTenses[m] || []).length;
-                if (badge) badge.innerText = `${selectedCount} gekozen`;
-
-                if (btn) {
-                    if (m === modus) btn.className = "p-2.5 sm:p-3 rounded-xl border-2 btn-selected text-left transition relative";
-                    else btn.className = "p-2.5 sm:p-3 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold text-left transition relative";
-                }
-            });
-
-            const grid = document.getElementById('tensesCheckboxGrid');
-            grid.innerHTML = '';
-
-            const list = TENSES_MAP[modus] || [];
-            const activeList = appState.selectedTenses[modus] || [];
-
-            list.forEach(t => {
-                const checked = activeList.includes(t.id);
-                const label = document.createElement('label');
-                label.className = `flex items-center space-x-2 p-2.5 rounded-lg border cursor-pointer transition ${
-                    checked ? 'bg-amber-100 border-roman-gold font-bold text-stone-900 shadow-sm' : 'bg-white border-stone-200 hover:bg-stone-50 text-stone-700'
-                }`;
-                label.innerHTML = `
-                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTense('${modus}', '${t.id}')" class="rounded text-roman-gold focus:ring-roman-gold w-4 h-4">
-                    <span class="font-medium">${t.label}</span>
-                `;
-                grid.appendChild(label);
-            });
-        }
-
-        function toggleTense(modus, tenseId) {
-            if (!appState.selectedTenses[modus]) appState.selectedTenses[modus] = [];
-            const arr = appState.selectedTenses[modus];
-            const idx = arr.indexOf(tenseId);
-            if (idx > -1) arr.splice(idx, 1);
-            else arr.push(tenseId);
-
-            renderTensesDropdown();
-        }
-
-        function toggleAllTensesInModus(enable) {
-            const modus = appState.selectedModus;
-            if (enable) appState.selectedTenses[modus] = (TENSES_MAP[modus] || []).map(t => t.id);
-            else appState.selectedTenses[modus] = [];
-            renderTensesDropdown();
-        }
-
-        function masterToggleAllTenses(enable) {
-            for (let m in TENSES_MAP) {
-                if (enable) appState.selectedTenses[m] = TENSES_MAP[m].map(t => t.id);
-                else appState.selectedTenses[m] = [];
-            }
-            renderTensesDropdown();
-        }
-
-        function startQuiz(isDaily = false) {
-            const noticeBox = document.getElementById('noticeBox');
-            if (noticeBox) noticeBox.classList.add('hidden');
-
-            const inputType = document.getElementById('quizInputType').value;
-            currentQuiz.mode = inputType;
-            currentQuiz.questions = [];
-            currentQuiz.currentIndex = 0;
-            currentQuiz.score = 0;
-            currentQuiz.isDaily = isDaily;
-            currentQuiz.usedHint = false;
-
-            if (appState.practiceType === 'endings' && !isDaily) {
-                ENDINGS_DB.filter(e => e.level <= appState.level).forEach(e => {
-                    currentQuiz.questions.push({
-                        topicTitle: e.category,
-                        questionText: "Wat is de uitgang voor:",
-                        stemWord: e.category,
-                        formDemand: e.prompt,
-                        correctAnswer: e.answer,
-                        explanation: e.expl,
-                        hint: `Zoek naar de uitgang van ${e.category}.`,
-                        distractors: ['-is', '-um', '-os', '-es', '-i', '-ae'].filter(x => x !== e.answer)
-                    });
-                });
-            } else {
-                const allSelectedTenses = Object.values(appState.selectedTenses).flat();
-
-                let eligibleTopics = appState.selectedTopics.filter(t => {
-                    for (let c in DATABASE) {
-                        if (DATABASE[c][t] && DATABASE[c][t].level <= appState.level) return true;
-                    }
-                    return false;
-                });
-
-                if (eligibleTopics.length === 0) {
-                    showNotice("Selecteer ten minste 1 rijtje om te oefenen.");
-                    return;
-                }
-
-                let generatedQuestionsCount = 0;
-
-                eligibleTopics.forEach(topicKey => {
-                    let item = null;
-                    for (let c in DATABASE) {
-                        if (DATABASE[c][topicKey]) item = DATABASE[c][topicKey];
-                    }
-                    if (!item) return;
-
-                    for (let formName in item.forms) {
-                        let formData = item.forms[formName];
-                        let correctVal = typeof formData === 'object' ? formData.val : formData;
-                        let expl = typeof formData === 'object' ? (formData.expl || '') : '';
-
-                        if (item.type === 'verb' && typeof formData === 'object') {
-                            if (formData.tense && !allSelectedTenses.includes(formData.tense) && !isDaily) continue;
-                        }
-
-                        const smartDistractors = generateSmartDistractors(item, correctVal);
-
-                        currentQuiz.questions.push({
-                            topicTitle: item.title,
-                            questionText: "Wat is de vorm van:",
-                            stemWord: topicKey,
-                            formDemand: typeof formData === 'object' ? formData.name : formName,
-                            correctAnswer: correctVal,
-                            explanation: expl || `Vorm van ${item.title} (${formName}).`,
-                            hint: `Stam: "${item.stem}" • Categorie: ${item.groupName || item.type}`,
-                            distractors: smartDistractors
-                        });
-                        generatedQuestionsCount++;
-                    }
-                });
-
-                if (generatedQuestionsCount === 0) {
-                    showNotice("Je hebt werkwoorden geselecteerd, maar nog geen werkwoordtijden aangevinkt. Vink ten minste 1 werkwoordtijd aan.");
-                    return;
-                }
-            }
-
-            currentQuiz.questions.sort(() => 0.5 - Math.random());
-            const maxCount = isDaily ? 5 : 10;
-            if (currentQuiz.questions.length > maxCount) {
-                currentQuiz.questions = currentQuiz.questions.slice(0, maxCount);
-            }
-
-            document.getElementById('quizOverlay').classList.remove('hidden');
-            renderCurrentQuestion();
-        }
-
-        function showNotice(msg) {
-            const box = document.getElementById('noticeBox');
-            if (box) {
-                box.innerText = msg;
-                box.classList.remove('hidden');
-            }
-        }
-
-        function generateSmartDistractors(item, correctVal) {
-            const pool = [];
-            for (let f in item.forms) {
-                let v = item.forms[f];
-                if (typeof v === 'object') v = v.val;
-                if (v !== correctVal && !pool.includes(v)) pool.push(v);
-            }
-            if (pool.length < 3) {
-                for (let c in DATABASE) {
-                    for (let k in DATABASE[c]) {
-                        if (DATABASE[c][k].type === item.type) {
-                            for (let f in DATABASE[c][k].forms) {
-                                let v = DATABASE[c][k].forms[f];
-                                if (typeof v === 'object') v = v.val;
-                                if (v !== correctVal && !pool.includes(v)) pool.push(v);
-                            }
-                        }
-                    }
-                }
-            }
-            return pool.sort(() => 0.5 - Math.random()).slice(0, 3);
-        }
-
-        function renderCurrentQuestion() {
-            currentQuiz.state = 'answering';
-            currentQuiz.usedHint = false;
-            
-            const q = currentQuiz.questions[currentQuiz.currentIndex];
-            const tot = currentQuiz.questions.length;
-
-            document.getElementById('quizCounter').innerText = `${currentQuiz.currentIndex + 1} / ${tot}`;
-            document.getElementById('quizProgressBar').style.width = `${((currentQuiz.currentIndex + 1) / tot) * 100}%`;
-            document.getElementById('quizTopicBadge').innerText = q.topicTitle;
-            document.getElementById('quizQuestionText').innerText = q.questionText;
-            document.getElementById('quizStemWord').innerText = q.stemWord;
-            document.getElementById('quizFormDemand').innerText = q.formDemand;
-
-            const hintBox = document.getElementById('quizHintBox');
-            hintBox.classList.add('hidden');
-            hintBox.innerText = '';
-            document.getElementById('hintBtn').disabled = false;
-
-            const opts = document.getElementById('quizOptionsContainer');
-            opts.innerHTML = '';
-
-            const action = document.getElementById('quizActionBtn');
-            action.innerText = "Controleer";
-
-            if (currentQuiz.mode === 'typing') {
-                const inputContainer = document.createElement('div');
-                inputContainer.className = "w-full pt-2 sm:col-span-2";
-
-                const input = document.createElement('input');
-                input.type = "text";
-                input.id = "quizTypeInput";
-                input.className = "w-full text-center p-3.5 rounded-xl border-2 border-stone-200 focus:border-roman-gold focus:outline-none font-serif font-bold text-stone-800 text-lg shadow-sm transition";
-                input.placeholder = "Typ hier je Latijnse antwoord...";
-                input.autocomplete = "off";
-
-                inputContainer.appendChild(input);
-                opts.appendChild(inputContainer);
-
-                setTimeout(() => input.focus(), 50);
-                action.disabled = false;
-                currentQuiz.selected = null;
-            } else {
-                const answers = [q.correctAnswer, ...q.distractors].sort(() => 0.5 - Math.random());
-                answers.forEach(a => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = "quiz-option-btn p-3.5 rounded-xl border-2 border-stone-200 bg-white hover:border-roman-gold font-serif font-bold text-stone-800 text-base transition shadow-sm break-words";
-                    btn.innerText = a;
-                    btn.onclick = () => selectOption(btn, a);
-                    opts.appendChild(btn);
-                });
-                action.disabled = true;
-                currentQuiz.selected = null;
-            }
-
-            document.getElementById('quizFeedbackBox').className = "hidden p-4 rounded-xl text-center space-y-1.5 transition";
-        }
-
-        function useHint() {
-            if (currentQuiz.usedHint) return;
-            if (appState.xp < 2) {
-                showNotice("Je hebt minstens 2 XP nodig voor een hint!");
-                return;
-            }
-            appState.xp -= 2;
-            currentQuiz.usedHint = true;
-            saveProgress();
-            updateRankAndThemeUI();
-
-            const q = currentQuiz.questions[currentQuiz.currentIndex];
-            const hintBox = document.getElementById('quizHintBox');
-            hintBox.innerText = `💡 Hint: ${q.hint}`;
-            hintBox.classList.remove('hidden');
-            document.getElementById('hintBtn').disabled = true;
-        }
-
-        function selectOption(btn, value) {
-            document.querySelectorAll('.quiz-option-btn').forEach(b => {
-                b.classList.remove('btn-selected');
-                b.classList.add('bg-white', 'border-stone-200');
-            });
-            btn.classList.remove('bg-white', 'border-stone-200');
-            btn.classList.add('btn-selected');
-            
-            currentQuiz.selected = value;
-            document.getElementById('quizActionBtn').disabled = false;
-        }
-
-        function handleQuizAction() {
-            if (currentQuiz.state === 'answering') submitAnswer();
-            else nextQuestion();
-        }
-
-        function normalizeText(str) {
-            if (!str) return '';
-            return str.toString().toLowerCase().trim().replace(/[-_ \t\r\n.,;:!?'"`~]/g, '');
-        }
-
-        function submitAnswer() {
-            const q = currentQuiz.questions[currentQuiz.currentIndex];
-            let userAns = '';
-
-            if (currentQuiz.mode === 'typing') {
-                const input = document.getElementById('quizTypeInput');
-                userAns = input ? input.value : '';
-            } else {
-                userAns = currentQuiz.selected ? currentQuiz.selected : '';
-            }
-
-            const isCorrect = normalizeText(userAns) !== '' && normalizeText(userAns) === normalizeText(q.correctAnswer);
-            const feedbackBox = document.getElementById('quizFeedbackBox');
-            const quizBox = document.getElementById('quizBox');
-            feedbackBox.classList.remove('hidden');
-
-            if (isCorrect) {
-                playSound('correct');
-                quizBox.classList.add('animate-success');
-                setTimeout(() => quizBox.classList.remove('animate-success'), 300);
-
-                currentQuiz.score++;
-                feedbackBox.className = "p-4 rounded-xl text-center space-y-1 transition bg-emerald-50 border border-emerald-200 text-emerald-900";
-                document.getElementById('quizFeedbackTitle').innerText = "Optime! (Uitstekend)";
-                document.getElementById('quizFeedbackDetail').innerText = `+10 XP verkregen!`;
-                document.getElementById('quizFeedbackExplanation').innerText = q.explanation;
-                
-                appState.xp += 10;
-                saveProgress();
-                updateRankAndThemeUI();
-            } else {
-                playSound('wrong');
-                quizBox.classList.add('animate-shake');
-                setTimeout(() => quizBox.classList.remove('animate-shake'), 400);
-
-                feedbackBox.className = "p-4 rounded-xl text-center space-y-1 transition bg-rose-50 border border-rose-200 text-rose-900";
-                document.getElementById('quizFeedbackTitle').innerText = "Helaas, niet helemaal juist.";
-                document.getElementById('quizFeedbackDetail').innerText = `Het juiste antwoord is: ${q.correctAnswer}`;
-                document.getElementById('quizFeedbackExplanation').innerText = q.explanation;
-            }
-
-            currentQuiz.state = 'feedback';
-            document.getElementById('quizActionBtn').innerText = "Volgende ↵";
-        }
-
-        function nextQuestion() {
-            currentQuiz.currentIndex++;
-            if (currentQuiz.currentIndex < currentQuiz.questions.length) renderCurrentQuestion();
-            else finishQuiz();
-        }
-
-        function finishQuiz() {
-            closeQuiz();
-            playSound('fanfare');
-            if (currentQuiz.isDaily) {
-                const todayStr = new Date().toISOString().split('T')[0];
-                if (appState.lastDailyDate !== todayStr) {
-                    appState.streak += 1;
-                    appState.xp += 50;
-                    appState.lastDailyDate = todayStr;
-                    saveProgress();
-                    updateRankAndThemeUI();
-                }
-            }
-        }
-
-        function closeQuiz() {
-            document.getElementById('quizOverlay').classList.add('hidden');
-        }
-
-        function getTodayString() {
-            return new Date().toISOString().split('T')[0];
-        }
-
-        function updateDailyStatusBox() {
-            const todayStr = getTodayString();
-            const dateText = document.getElementById('dailyDateText');
-            const desc = document.getElementById('dailyStatusDescription');
-            const startBtn = document.getElementById('dailyStartBtn');
-
-            if (dateText) dateText.innerText = todayStr;
-
-            if (appState.lastDailyDate === todayStr) {
-                if (desc) desc.innerHTML = `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> Uitdaging al voltooid voor vandaag!</span> Kom morgen terug voor je volgende streak!`;
-                if (startBtn) {
-                    startBtn.disabled = true;
-                    startBtn.className = "w-full py-3.5 bg-stone-300 text-stone-500 font-cinzel font-bold text-base rounded-xl cursor-not-allowed";
-                    startBtn.innerHTML = '<i class="fa-solid fa-check"></i> Voltooid voor Vandaag';
-                }
-            } else {
-                if (desc) desc.innerText = "Nog niet voltooid. Voltooi 5 vragen voor +50 XP en behoud je streak!";
-                if (startBtn) {
-                    startBtn.disabled = false;
-                    startBtn.className = "w-full py-3.5 red-gradient text-white font-cinzel font-bold text-base rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center space-x-2";
-                    startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Start Dagelijkse Uitdaging (5 Vragen)';
-                }
-            }
-        }
-
-        function startDailyChallenge() {
-            startQuiz(true);
-        }
-
-        // Global keydown handler
-        document.addEventListener('keydown', (e) => {
-            const overlay = document.getElementById('quizOverlay');
-            if (!overlay || overlay.classList.contains('hidden')) return;
-
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleQuizAction();
-            }
-        });
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            loadProgress();
-            renderTopicsGrid();
-            renderTensesDropdown();
-        });
-    </script>
+      }
+
+      // Shuffle distractors & pick 3
+      shuffleArray(distractors);
+      const options = distractors.slice(0, 3);
+      options.push(correctVal);
+      shuffleArray(options);
+
+      // EFFECTIVE HINT
+      const hint = `Welke uitgang hoort bij ${formKey}? Streep af wat niet klopt en let op de stam (${item.stem || item.title}).`;
+
+      questions.push({
+        topic: item.title,
+        stem: topicKey,
+        demand: formKey,
+        correct: correctVal,
+        options: options,
+        hint: hint,
+        expl: expl
+      });
+    }
+  } else {
+    // Losse uitgangen
+    const count = isDaily ? 5 : 10;
+    for (let i = 0; i < count; i++) {
+      const item = ENDINGS_DB[Math.floor(Math.random() * ENDINGS_DB.length)];
+      const distractors = ['-is', '-um', '-os', '-am', '-i', '-a', '-bus', '-nt'].filter(d => d !== item.answer);
+      shuffleArray(distractors);
+      const options = distractors.slice(0, 3);
+      options.push(item.answer);
+      shuffleArray(options);
+
+      questions.push({
+        topic: item.category,
+        stem: item.prompt,
+        demand: 'Wat is de juiste uitgang?',
+        correct: item.answer,
+        options: options,
+        hint: `Welke uitgang hoort bij ${item.prompt}?`,
+        expl: item.expl
+      });
+    }
+  }
+
+  currentQuiz = {
+    mode: mode,
+    questions: questions,
+    currentIndex: 0,
+    score: 0,
+    selected: null,
+    state: 'answering',
+    isDaily: isDaily,
+    usedHint: false
+  };
+
+  openQuizModal();
+}
+
+function getAvailableTopicsForLevel() {
+  const topics = [];
+  for (let c in DATABASE) {
+    for (let k in DATABASE[c]) {
+      if (DATABASE[c][k].level <= appState.level) topics.push(k);
+    }
+  }
+  return topics.length ? topics : ['filia', 'dominus'];
+}
+
+function openQuizModal() {
+  document.getElementById('quizOverlay').classList.remove('hidden');
+  renderCurrentQuestion();
+}
+
+function closeQuiz() {
+  document.getElementById('quizOverlay').classList.add('hidden');
+}
+
+function renderCurrentQuestion() {
+  const q = currentQuiz.questions[currentQuiz.currentIndex];
+  currentQuiz.selected = null;
+  currentQuiz.state = 'answering';
+  currentQuiz.usedHint = false;
+
+  document.getElementById('quizCounter').innerText = `${currentQuiz.currentIndex + 1} / ${currentQuiz.questions.length}`;
+  document.getElementById('quizProgressBar').style.width = `${((currentQuiz.currentIndex + 1) / currentQuiz.questions.length) * 100}%`;
+  document.getElementById('quizTopicBadge').innerText = q.topic;
+  document.getElementById('quizStemWord').innerText = q.stem;
+  document.getElementById('quizFormDemand').innerText = q.demand;
+
+  document.getElementById('quizHintBox').classList.add('hidden');
+  document.getElementById('quizFeedbackBox').classList.add('hidden');
+
+  const actionBtn = document.getElementById('quizActionBtn');
+  actionBtn.innerText = 'Controleer';
+  actionBtn.disabled = currentQuiz.mode === 'mc';
+
+  const optionsContainer = document.getElementById('quizOptionsContainer');
+  const typingContainer = document.getElementById('quizTypingContainer');
+  const typingInput = document.getElementById('typingAnswerInput');
+
+  if (currentQuiz.mode === 'mc') {
+    optionsContainer.classList.remove('hidden');
+    typingContainer.classList.add('hidden');
+    optionsContainer.innerHTML = '';
+
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = "quiz-option-btn p-3.5 border-2 border-stone-200 rounded-2xl bg-white text-stone-800 font-serif font-bold text-lg text-center shadow-sm w-full";
+      btn.innerText = opt;
+      btn.onclick = () => selectOption(idx, opt, btn);
+      optionsContainer.appendChild(btn);
+    });
+  } else {
+    optionsContainer.classList.add('hidden');
+    typingContainer.classList.remove('hidden');
+    typingInput.value = '';
+    setTimeout(() => typingInput.focus(), 100);
+  }
+}
+
+function selectOption(idx, optVal, btnEl) {
+  if (currentQuiz.state !== 'answering') return;
+  currentQuiz.selected = optVal;
+
+  const allBtns = document.querySelectorAll('#quizOptionsContainer button');
+  allBtns.forEach(b => b.classList.remove('btn-selected'));
+  btnEl.classList.add('btn-selected');
+
+  document.getElementById('quizActionBtn').disabled = false;
+}
+
+function useHint() {
+  if (currentQuiz.usedHint) return;
+  const q = currentQuiz.questions[currentQuiz.currentIndex];
+  const hintBox = document.getElementById('quizHintBox');
+  hintBox.innerText = `💡 Hint: ${q.hint}`;
+  hintBox.classList.remove('hidden');
+  currentQuiz.usedHint = true;
+}
+
+function handleQuizAction() {
+  if (currentQuiz.state === 'answering') {
+    checkAnswer();
+  } else {
+    nextQuestion();
+  }
+}
+
+function checkAnswer() {
+  const q = currentQuiz.questions[currentQuiz.currentIndex];
+  let userAns = '';
+
+  if (currentQuiz.mode === 'mc') {
+    userAns = currentQuiz.selected;
+  } else {
+    userAns = document.getElementById('typingAnswerInput').value.trim();
+  }
+
+  if (!userAns) return;
+
+  const isCorrect = userAns.toLowerCase() === q.correct.toLowerCase();
+  currentQuiz.state = 'feedback';
+
+  const feedbackBox = document.getElementById('quizFeedbackBox');
+  const feedbackTitle = document.getElementById('quizFeedbackTitle');
+  const feedbackDetail = document.getElementById('quizFeedbackDetail');
+  const feedbackExpl = document.getElementById('quizFeedbackExplanation');
+
+  feedbackBox.classList.remove('hidden');
+
+  if (isCorrect) {
+    playSound('correct');
+    currentQuiz.score++;
+    const points = currentQuiz.usedHint ? 8 : 10;
+    appState.xp += points;
+
+    feedbackBox.className = "p-4 rounded-xl text-center space-y-1.5 transition bg-emerald-50 border border-emerald-300 text-emerald-900 animate-success";
+    feedbackTitle.innerText = `Optime! Juist antwoord (+${points} XP)`;
+    feedbackDetail.innerText = `${q.correct} is de correcte vorm.`;
+    feedbackExpl.innerText = q.expl;
+  } else {
+    playSound('wrong');
+    feedbackBox.className = "p-4 rounded-xl text-center space-y-1.5 transition bg-red-50 border border-red-300 text-red-900 animate-shake";
+    feedbackTitle.innerText = `Helaas, niet juist!`;
+    feedbackDetail.innerText = `Jouw antwoord: ${userAns} • Juiste antwoord: ${q.correct}`;
+    feedbackExpl.innerText = q.expl;
+  }
+
+  saveProgress();
+  updateRankAndThemeUI();
+
+  const actionBtn = document.getElementById('quizActionBtn');
+  actionBtn.innerText = 'Volgende ↵';
+  actionBtn.disabled = false;
+}
+
+function nextQuestion() {
+  currentQuiz.currentIndex++;
+  if (currentQuiz.currentIndex < currentQuiz.questions.length) {
+    renderCurrentQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function finishQuiz() {
+  if (currentQuiz.isDaily) {
+    const today = getTodayDateString();
+    appState.lastDailyDate = today;
+    appState.xp += 50; // Daily reward bonus
+    appState.streak += 1;
+    saveProgress();
+    updateRankAndThemeUI();
+  }
+
+  const percentage = Math.round((currentQuiz.score / currentQuiz.questions.length) * 100);
+  const quizBox = document.getElementById('quizBox');
+
+  quizBox.innerHTML = `
+    <div class="p-8 text-center space-y-5">
+      <div class="w-20 h-20 rounded-full gold-gradient flex items-center justify-center text-white text-3xl mx-auto shadow-lg">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <h3 class="font-cinzel text-2xl font-bold text-stone-900">Oefening Voltooid!</h3>
+      <p class="text-sm text-stone-600">Je hebt <span class="font-bold text-roman-red">${currentQuiz.score} van de ${currentQuiz.questions.length}</span> vragen juist beantwoord (${percentage}%).</p>
+      
+      <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-semibold">
+        Totaal Behaalde Score: ${appState.xp} XP
+      </div>
+
+      <button onclick="closeQuiz(); location.reload();" class="px-8 py-3 red-gradient text-white font-cinzel font-bold text-sm rounded-xl shadow hover:opacity-95 transition">
+        Terug naar Overzicht
+      </button>
+    </div>
+  `;
+}
+
+/* DAILY CHALLENGE 1X PER DAY LIMIT */
+function getTodayDateString() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function updateDailyStatusBox() {
+  const today = getTodayDateString();
+  const dateEl = document.getElementById('dailyDateText');
+  const descEl = document.getElementById('dailyStatusDescription');
+  const btn = document.getElementById('dailyStartBtn');
+
+  if (dateEl) dateEl.innerText = today;
+
+  if (appState.lastDailyDate === today) {
+    if (descEl) descEl.innerText = "🎉 Je hebt de challenge van vandaag al voltooid! Kom morgen terug voor je volgende streak bonus.";
+    if (btn) {
+      btn.disabled = true;
+      btn.className = "w-full py-3.5 bg-stone-200 text-stone-500 font-cinzel font-bold text-base rounded-xl cursor-not-allowed shadow-none";
+      btn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i><span>Al Voltooid Vandaag</span>`;
+    }
+  } else {
+    if (descEl) descEl.innerText = "Nog niet voltooid. Start de challenge, behaal 5 vragen goed en behoud je streak!";
+    if (btn) {
+      btn.disabled = false;
+      btn.className = "w-full py-3.5 red-gradient text-white font-cinzel font-bold text-base rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center space-x-2";
+      btn.innerHTML = `<i class="fa-solid fa-bolt"></i><span>Start Dagelijkse Uitdaging (5 Vragen)</span>`;
+    }
+  }
+}
+
+function startDailyChallenge() {
+  const today = getTodayDateString();
+  if (appState.lastDailyDate === today) return;
+  generateQuestions(true);
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/* GLOBAL ENTER KEY LISTENER FOR SMOOTH NAVIGATION */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const quizOverlay = document.getElementById('quizOverlay');
+    if (quizOverlay && !quizOverlay.classList.contains('hidden')) {
+      e.preventDefault();
+      handleQuizAction();
+    }
+  }
+});
+
+/* INITIALIZATION */
+window.addEventListener('DOMContentLoaded', () => {
+  loadProgress();
+  renderTopicsGrid();
+});
+</script>
 </body>
 </html>
