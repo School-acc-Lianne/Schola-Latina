@@ -2,9 +2,9 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Schola Latina Trainer - Latijnse Grammatica & Rijtjes</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <script>
@@ -34,7 +34,9 @@ tailwind.config = {
 }
 </script>
 <style>
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 :root {
+  box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
   --bg-pattern: radial-gradient(#e5decf 1px, transparent 1px);
   --theme-accent-start: #D4AF37;
   --theme-accent-mid: #C5A059;
@@ -649,10 +651,26 @@ const DATABASE = {
 };
 
 const ENDINGS_DB = [
-  { level: 1, category: 'Praesens Actief', prompt: '1e pers. enk. (ik)', answer: '-o', expl: 'Standaard uitgang 1e pers. enk.' },
-  { level: 1, category: 'Praesens Actief', prompt: '2e pers. enk. (jij)', answer: '-s', expl: 'Standaard uitgang 2e pers. enk.' },
-  { level: 1, category: 'Praesens Actief', prompt: '3e pers. enk. (hij/zij)', answer: '-t', expl: 'Standaard uitgang 3e pers. enk.' },
-  { level: 1, category: 'Imperfectum', prompt: 'Kenletter imperfectum', answer: '-ba-', expl: 'Kenmerk van het imperfectum.' }
+  { level: 1, category: 'Praes. act.', prompt: '1e pers. enk. (ik)', answer: '-o', expl: 'Standaard uitgang 1e pers. enk.', hints: [
+    'Het rijtje uitgangen van het praesens gaat: -o · -s · -t · -mus · -tis · -nt. Je zoekt de eerste uit het rijtje.',
+    'Denk aan salutO: bij "ik" hoort de korte klank aan het eind van het woord.',
+    'Het is de enige uitgang in het praesens-rijtje die uit een klinker bestaat.'
+  ] },
+  { level: 1, category: 'Praes. act.', prompt: '2e pers. enk. (jij)', answer: '-s', expl: 'Standaard uitgang 2e pers. enk.', hints: [
+    'Het rijtje uitgangen van het praesens gaat: -o · -s · -t · -mus · -tis · -nt. Je zoekt de tweede uit het rijtje.',
+    'Denk aan salutaS: bij "jij" hoort een s aan het eind.',
+    'In het praesens-rijtje staat deze uitgang tussen -o en -t. Het is een enkele medeklinker.'
+  ] },
+  { level: 1, category: 'Praes. act.', prompt: '3e pers. enk. (hij/zij)', answer: '-t', expl: 'Standaard uitgang 3e pers. enk.', hints: [
+    'Het rijtje uitgangen van het praesens gaat: -o · -s · -t · -mus · -tis · -nt. Je zoekt de derde uit het rijtje.',
+    'Denk aan salutaT: bij "hij/zij" hoort een t aan het eind, net als in "hij loopt".',
+    'Vergelijk het Nederlands: "hij loopt" eindigt op dezelfde letter als de Latijnse uitgang.'
+  ] },
+  { level: 1, category: 'Imperf.', prompt: 'Kenletter imperfectum', answer: '-ba-', expl: 'Kenmerk van het imperfectum.', hints: [
+    'Imperfectum: stam + kenmerk + persoonsuitgang. Denk aan salutaBAm, salutaBAs, salutaBAt.',
+    'Het kenmerk van het imperfectum staat tússen de stam en de persoonsuitgang, en bestaat uit twee letters.',
+    'Het rijtje van het imperfectum begint met -bam, -bas, -bat. Wat hebben die gemeen?'
+  ] }
 ];
 
 /* ALL 32 GRAMMAR ACCORDION DEFINITIONS */
@@ -905,6 +923,7 @@ function loadProgress() {
       appState.level = parsed.level || 2;
       appState.activeTheme = parsed.activeTheme || 'default';
       appState.lastDailyDate = parsed.lastDailyDate || '';
+      appState.lastRankIdx = (typeof parsed.lastRankIdx === 'number') ? parsed.lastRankIdx : undefined;
     }
   } catch(e){}
   
@@ -920,7 +939,8 @@ function saveProgress() {
       streak: appState.streak,
       level: appState.level,
       activeTheme: appState.activeTheme,
-      lastDailyDate: appState.lastDailyDate
+      lastDailyDate: appState.lastDailyDate,
+      lastRankIdx: appState.lastRankIdx
     }));
   } catch(e){}
 }
@@ -935,6 +955,125 @@ function selectAllForLevel() {
     }
   }
   appState.selectedTopics = selected;
+}
+
+const RANKS = [
+  { id: 'rankCardTiro',       name: 'Tiro',                xp: 0,    icon: 'fa-shield',        theme: null },
+  { id: 'rankCardLegionarius', name: 'Legionarius',         xp: 100,  icon: 'fa-helmet-safety', theme: 'Keizerlijk Purper' },
+  { id: 'rankCardCenturio',   name: 'Centurio',            xp: 300,  icon: 'fa-user-shield',   theme: 'Pompeï Rood' },
+  { id: 'rankCardTribunus',   name: 'Tribunus',            xp: 600,  icon: 'fa-chess-knight',  theme: 'Laurier Groen' },
+  { id: 'rankCardConsul',     name: 'Consul / Imperator',  xp: 1000, icon: 'fa-crown',         theme: null }
+];
+
+function getRankIndex(xp) {
+  let idx = 0;
+  RANKS.forEach((r, i) => { if (xp >= r.xp) idx = i; });
+  return idx;
+}
+
+/* Rangkaarten in het beloningenoverzicht: behaald = aangevinkt, huidige rang = goud, rest = vergrendeld */
+function updateRankCards(xp) {
+  const cur = getRankIndex(xp);
+  RANKS.forEach((r, i) => {
+    const el = document.getElementById(r.id);
+    if (!el) return;
+    const earned = xp >= r.xp;
+    const isCurrent = i === cur;
+    el.className = isCurrent
+      ? 'p-3 rounded-xl border-2 border-amber-500 bg-amber-50 text-center space-y-1 shadow-sm'
+      : earned
+        ? 'p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50/60 text-center space-y-1'
+        : 'p-3 rounded-xl border border-stone-200 bg-stone-50 text-center space-y-1 opacity-60';
+    const status = isCurrent
+      ? '<div class="text-[10px] font-bold text-amber-700"><i class="fa-solid fa-circle-check mr-1"></i>Huidige rang</div>'
+      : earned
+        ? '<div class="text-[10px] font-bold text-emerald-700"><i class="fa-solid fa-circle-check mr-1"></i>Behaald</div>'
+        : `<div class="text-[10px] font-semibold text-stone-500"><i class="fa-solid fa-lock mr-1"></i>nog ${r.xp - xp} XP</div>`;
+    const shortName = r.name === 'Consul / Imperator' ? 'Consul' : r.name;
+    el.innerHTML = `
+      <i class="fa-solid ${r.icon} ${earned ? 'text-amber-600' : 'text-stone-500'} text-lg"></i>
+      <div class="font-cinzel font-bold text-xs text-stone-900">${shortName}</div>
+      <div class="text-[10px] text-stone-500">${r.xp} XP</div>
+      ${status}`;
+  });
+}
+
+/* Thema-kaarten: ontgrendeld = vinkje, actief = groene rand, vergrendeld = hoeveel XP nog */
+function updateThemeCards(xp) {
+  const defs = [
+    ['btnThemeDefault', 'default', 0],
+    ['btnThemePurple', 'purple', 100],
+    ['btnThemePompeii', 'pompeii', 300],
+    ['btnThemeLaurel', 'laurel', 600]
+  ];
+  defs.forEach(([id, key, need]) => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    const card = b.closest('.roman-card');
+    const unlocked = xp >= need;
+    const active = appState.activeTheme === key;
+    if (unlocked) {
+      b.innerHTML = active ? '<i class="fa-solid fa-circle-check mr-1"></i> Actief' : 'Kiezen';
+    } else {
+      b.innerHTML = `<i class="fa-solid fa-lock mr-1"></i> Nog ${need - xp} XP`;
+    }
+    if (card) {
+      card.classList.toggle('ring-2', active);
+      card.classList.toggle('ring-emerald-500', active);
+      const h4 = card.querySelector('h4');
+      if (h4) {
+        if (!h4.dataset.base) h4.dataset.base = h4.textContent;
+        h4.innerHTML = h4.dataset.base + (unlocked ? ' <i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>' : '');
+      }
+    }
+  });
+}
+
+/* Viering bij een nieuwe rang */
+function celebrateRankUp(idx) {
+  const r = RANKS[idx];
+  playSound('correct');
+  const old = document.getElementById('rankUpToast');
+  if (old) old.remove();
+  const toast = document.createElement('div');
+  toast.id = 'rankUpToast';
+  toast.className = 'fixed left-1/2 -translate-x-1/2 top-4 z-[70] w-[92%] max-w-md bg-stone-900 text-amber-200 border-2 border-amber-400 rounded-2xl shadow-2xl p-4 text-center cursor-pointer';
+  toast.innerHTML = `
+    <div class="text-2xl"><i class="fa-solid ${r.icon} text-amber-400"></i></div>
+    <div class="font-cinzel font-black text-base text-white mt-1">Nieuwe rang: ${r.name}!</div>
+    <div class="text-xs mt-1">Je hebt ${r.xp} XP bereikt. Gefeliciteerd!</div>
+    ${r.theme ? `<div class="text-[11px] mt-1 text-amber-300">Nieuw thema ontgrendeld: ${r.theme} (kies het bij Beloningen & Thema's)</div>` : ''}`;
+  toast.onclick = () => toast.remove();
+  document.body.appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 6000);
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#C5A059', '#800020', '#10B981', '#9333EA', '#FBBF24'];
+  const parts = Array.from({ length: 110 }, () => ({
+    x: canvas.width / 2, y: canvas.height * 0.25,
+    vx: (Math.random() - 0.5) * 12, vy: Math.random() * -9 - 2,
+    size: Math.random() * 6 + 4, color: colors[Math.floor(Math.random() * colors.length)],
+    rot: Math.random() * 6
+  }));
+  const start = performance.now();
+  (function frame(now) {
+    const t = now - start;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    parts.forEach(pt => {
+      pt.vy += 0.28; pt.x += pt.vx; pt.y += pt.vy; pt.rot += 0.1;
+      ctx.save(); ctx.translate(pt.x, pt.y); ctx.rotate(pt.rot);
+      ctx.fillStyle = pt.color; ctx.fillRect(-pt.size / 2, -pt.size / 2, pt.size, pt.size * 0.6);
+      ctx.restore();
+    });
+    if (t < 2600) requestAnimationFrame(frame); else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  })(start);
 }
 
 function updateRankAndThemeUI() {
@@ -1033,6 +1172,19 @@ function updateRankAndThemeUI() {
   }
 
   applyTheme(appState.activeTheme, false);
+
+  // Automatisch naar de volgende rang + overzicht bijwerken
+  const rankIdx = getRankIndex(xp);
+  if (appState.lastRankIdx === undefined) {
+    appState.lastRankIdx = rankIdx;
+    saveProgress();
+  } else if (rankIdx > appState.lastRankIdx) {
+    appState.lastRankIdx = rankIdx;
+    saveProgress();
+    celebrateRankUp(rankIdx);
+  }
+  updateRankCards(xp);
+  updateThemeCards(xp);
   updateDailyStatusBox();
 }
 
@@ -1197,13 +1349,15 @@ function renderGrammarAccordion() {
     contentBox.id = `accContent_${item.id}`;
     contentBox.className = "hidden border-t border-stone-100 p-4 bg-stone-50/50 space-y-4";
 
+    let tableHTML;
     if (item.isVerbTense) {
-      contentBox.innerHTML = generateVerbTenseHTML(item);
+      tableHTML = generateVerbTenseHTML(item);
     } else if (item.genderTabs) {
-      contentBox.innerHTML = generateGenderTabsHTML(item);
+      tableHTML = generateGenderTabsHTML(item);
     } else {
-      contentBox.innerHTML = generateStandardTableHTML(item.headers, item.rows);
+      tableHTML = generateStandardTableHTML(item.headers, item.rows);
     }
+    contentBox.innerHTML = generatePracticeToolbarHTML(item.id) + `<div id="accTables_${item.id}">${tableHTML}</div>`;
 
     card.appendChild(btn);
     card.appendChild(contentBox);
@@ -1251,13 +1405,199 @@ function filterAccordionItems() {
   });
 }
 
+/* ===== OEFENMODUS VOOR RIJTJES ===== */
+function generatePracticeToolbarHTML(id) {
+  return `
+    <div class="flex flex-wrap items-center gap-2">
+      <button type="button" id="pracStart_${id}" onclick="startPractice('${id}')" class="px-3 py-1.5 bg-roman-red hover:opacity-90 text-white rounded-xl text-xs font-bold transition shadow-sm">
+        <i class="fa-solid fa-eye-slash mr-1"></i> Verberg rijtje &amp; oefen
+      </button>
+      <div id="pracActions_${id}" class="hidden flex flex-wrap items-center gap-2">
+        <button type="button" onclick="checkPractice('${id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+          <i class="fa-solid fa-check mr-1"></i> Controleer
+        </button>
+        <button type="button" onclick="resetPractice('${id}')" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition">
+          <i class="fa-solid fa-eraser mr-1"></i> Wis alles
+        </button>
+        <button type="button" onclick="stopPractice('${id}')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 rounded-xl text-xs font-bold transition">
+          <i class="fa-solid fa-eye mr-1"></i> Toon rijtje weer
+        </button>
+      </div>
+      <span id="pracResult_${id}" class="text-xs font-bold"></span>
+    </div>
+  `;
+}
+
+/* Haalt de te typen antwoorden uit een cel: haakjes (vertaling) weg, 'a / b' = twee toegestane vormen */
+function parsePracticeAnswers(text) {
+  const clean = text.replace(/\s*\(.*?\)\s*/g, ' ').trim();
+  if (!clean || clean.startsWith('—') || clean.startsWith('-')) return null;
+  return clean.split('/').map(a => normalizeAnswer(a)).filter(Boolean);
+}
+function normalizeAnswer(t) {
+  return t.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+/* Volgorde van de vakjes: per tabel eerst de hele linkerkolom (enkelvoud), dan de hele rechterkolom (meervoud) */
+function getPracticeOrder(box) {
+  const tables = Array.from(box.querySelectorAll('table'));
+  return Array.from(box.querySelectorAll('.practice-input'))
+    .filter(i => i.offsetParent !== null)
+    .map((input, idx) => {
+      const cell = input.closest('td');
+      const row = cell.parentElement;
+      return {
+        input, idx,
+        t: tables.indexOf(input.closest('table')),
+        c: cell.cellIndex,
+        r: row.rowIndex
+      };
+    })
+    .sort((a, b) => a.t - b.t || a.c - b.c || a.r - b.r)
+    .map(o => o.input);
+}
+
+function startPractice(id) {
+  const box = document.getElementById(`accTables_${id}`);
+  if (!box) return;
+  box.querySelectorAll('.form-cell').forEach(cell => {
+    if (cell.dataset.orig === undefined) cell.dataset.orig = cell.textContent;
+    const orig = cell.dataset.orig;
+    const answers = parsePracticeAnswers(orig);
+    if (!answers) return; // bv. "— (geen nom.)": niets om te typen
+    const hintMatch = orig.match(/\((.*?)\)/);
+    cell.innerHTML = '';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocapitalize', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('spellcheck', 'false');
+    input.className = 'practice-input w-full min-w-[5.5rem] px-2 py-1 border-2 border-stone-200 rounded-lg bg-white text-roman-red font-serif font-bold text-sm focus:outline-none focus:border-roman-gold';
+    input.placeholder = '…';
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Tab') {
+        // Tab/Shift+Tab volgen dezelfde volgorde: eerst heel enkelvoud, dan heel meervoud
+        const all = getPracticeOrder(box);
+        const target = all[all.indexOf(input) + (e.shiftKey ? -1 : 1)];
+        if (target) {
+          e.preventDefault();
+          target.focus();
+        }
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const all = getPracticeOrder(box);
+        const next = all[all.indexOf(input) + 1];
+        if (next) next.focus(); else checkPractice(id);
+      }
+    });
+    input.addEventListener('input', () => {
+      input.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-400', 'bg-red-50');
+      input.classList.add('border-stone-200');
+      const fb = input.parentElement.querySelector('.practice-fb');
+      if (fb) fb.remove();
+    });
+    cell.appendChild(input);
+    if (hintMatch) {
+      const h = document.createElement('div');
+      h.className = 'text-[10px] text-stone-400 font-sans font-medium mt-0.5';
+      h.textContent = hintMatch[1];
+      cell.appendChild(h);
+    }
+  });
+  document.getElementById(`pracStart_${id}`).classList.add('hidden');
+  document.getElementById(`pracActions_${id}`).classList.remove('hidden');
+  const res = document.getElementById(`pracResult_${id}`);
+  res.textContent = 'Vul de vormen in en klik op Controleer (Enter springt naar het volgende vakje).';
+  res.className = 'text-xs font-semibold text-stone-500';
+  const first = getPracticeOrder(box)[0];
+  if (first) first.focus();
+}
+
+function checkPractice(id) {
+  const box = document.getElementById(`accTables_${id}`);
+  const item = GRAMMAR_ACCORDION_DATA.find(i => i.id === id);
+  if (!box) return;
+  let total = 0, good = 0, empty = 0;
+  box.querySelectorAll('.form-cell').forEach(cell => {
+    const input = cell.querySelector('.practice-input');
+    if (!input || input.offsetParent === null) return; // alleen zichtbare vakjes (huidig tabblad)
+    total++;
+    const answers = parsePracticeAnswers(cell.dataset.orig);
+    const user = normalizeAnswer(input.value).replace(/\s*\/\s*/g, ' / ');
+    const full = answers.join(' / ');
+    const old = cell.querySelector('.practice-fb');
+    if (old) old.remove();
+    input.classList.remove('border-stone-200', 'border-emerald-500', 'bg-emerald-50', 'border-red-400', 'bg-red-50');
+    if (!user) {
+      empty++;
+      input.classList.add('border-red-400', 'bg-red-50');
+      appendPracticeFeedback(cell, `Antwoord: ${cell.dataset.orig.replace(/\s*\(.*?\)\s*/g, ' ').trim()}`);
+    } else if (answers.includes(user) || user === full) {
+      good++;
+      input.classList.add('border-emerald-500', 'bg-emerald-50');
+    } else {
+      input.classList.add('border-red-400', 'bg-red-50');
+      appendPracticeFeedback(cell, `Juist: ${cell.dataset.orig.replace(/\s*\(.*?\)\s*/g, ' ').trim()}`);
+    }
+  });
+  const res = document.getElementById(`pracResult_${id}`);
+  const scope = item && item.genderTabs ? ' in dit tabblad' : '';
+  if (good === total) {
+    playSound('correct');
+    res.textContent = `Optime! Alles goed${scope} (${good}/${total}) 🎉`;
+    res.className = 'text-xs font-bold text-emerald-700';
+  } else {
+    playSound('wrong');
+    res.textContent = `${good} van ${total} goed${scope}${empty ? ` (${empty} leeg)` : ''}. Verbeter de rode vakjes of klik op Wis alles.`;
+    res.className = 'text-xs font-bold text-red-700';
+  }
+}
+
+function appendPracticeFeedback(cell, text) {
+  const fb = document.createElement('div');
+  fb.className = 'practice-fb text-[11px] text-red-700 font-sans font-semibold mt-0.5';
+  fb.textContent = text;
+  cell.appendChild(fb);
+}
+
+function resetPractice(id) {
+  const box = document.getElementById(`accTables_${id}`);
+  if (!box) return;
+  box.querySelectorAll('.practice-input').forEach(input => {
+    input.value = '';
+    input.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-400', 'bg-red-50');
+    input.classList.add('border-stone-200');
+  });
+  box.querySelectorAll('.practice-fb').forEach(f => f.remove());
+  const res = document.getElementById(`pracResult_${id}`);
+  res.textContent = 'Alles gewist. Probeer opnieuw!';
+  res.className = 'text-xs font-semibold text-stone-500';
+  const first = getPracticeOrder(box)[0];
+  if (first) first.focus();
+}
+
+function stopPractice(id) {
+  const box = document.getElementById(`accTables_${id}`);
+  if (!box) return;
+  box.querySelectorAll('.form-cell').forEach(cell => {
+    if (cell.dataset.orig !== undefined) cell.textContent = cell.dataset.orig;
+  });
+  document.getElementById(`pracStart_${id}`).classList.remove('hidden');
+  document.getElementById(`pracActions_${id}`).classList.add('hidden');
+  const res = document.getElementById(`pracResult_${id}`);
+  res.textContent = '';
+}
+
 function generateStandardTableHTML(headers, rows) {
   let hHtml = headers.map(h => `<th class="py-2 px-3 text-stone-600 font-cinzel text-xs uppercase tracking-wider border-b border-stone-200">${h}</th>`).join('');
   let rHtml = rows.map(r => `
     <tr class="border-b border-stone-200/60 hover:bg-amber-50/40 transition">
       <td class="py-2 px-3 font-medium text-stone-500 text-xs">${r[0]}</td>
-      <td class="py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[1] || ''}</td>
-      ${r[2] !== undefined ? `<td class="py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[2]}</td>` : ''}
+      <td class="form-cell py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[1] || ''}</td>
+      ${r[2] !== undefined ? `<td class="form-cell py-2 px-3 font-serif font-bold text-roman-red text-sm">${r[2]}</td>` : ''}
     </tr>
   `).join('');
   return `
@@ -1303,8 +1643,8 @@ function switchGenderSubTab(id, gender) {
 
 function generateVerbTenseHTML(item) {
   const vData = item.verbData;
-  let indActRows = vData.ind.act.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
-  let indPassRows = vData.ind.pass.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
+  let indActRows = vData.ind.act.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="form-cell py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
+  let indPassRows = vData.ind.pass.map(r => `<tr class="border-b border-stone-200/50"><td class="py-1.5 px-2 text-xs text-stone-500">${r[0]}</td><td class="form-cell py-1.5 px-2 text-sm font-serif font-bold text-roman-red">${r[1]}</td></tr>`).join('');
   return `
     <div class="space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1339,6 +1679,137 @@ function showNotice(msg) {
   }
 }
 
+/* Maakt van interne sleutels (f4, 'nom. enk.') een duidelijke, afgekorte vraag */
+function buildDemandLabel(formKey, rawForm, item) {
+  const persons = { '1e': 'ik', '2e': 'jij', '3e': 'hij/zij' };
+  if (typeof rawForm === 'object' && rawForm.name) {
+    const tenseAbbr = {
+      'praesens': 'praes.', 'imperfectum': 'imperf.', 'perfectum': 'perf.',
+      'plusquamperf.': 'plusq.', 'futurum': 'fut.', 'futurum exactum': 'fut. ex.'
+    };
+    let n = rawForm.name;
+    Object.keys(tenseAbbr).sort((x, y) => y.length - x.length).some(t => {
+      if (n.startsWith(t + ' ')) { n = tenseAbbr[t] + n.slice(t.length); return true; }
+      return false;
+    });
+    const m = rawForm.name.match(/(\d)e pers\./);
+    if (m && persons[m[1] + 'e']) n = n.replace(/(\de pers\. (?:enk\.|mv\.))/, `$1 (${persons[m[1] + 'e']})`);
+    return `${n} – ind. act.`;
+  }
+  // zelfstandige/bijvoeglijke naamwoorden en voornaamwoorden: afkorting zoals in het rijtje (nom. enk.)
+  // Bij bijvoeglijke/aanwijzende woorden altijd het geslacht erbij; als de vorm voor alle geslachten gelijk is, zeggen we dat.
+  if (item && (item.type === 'adj' || item.type === 'pronoun') && !/mnl\.|vrl\.|onz\./.test(formKey)) {
+    return `${formKey} (mnl./vrl./onz.)`;
+  }
+  return formKey;
+}
+
+/* Afwisselende, nuttige hints per vraag */
+function buildHint(item, topicKey, formKey, rawForm, correctVal, demandLabel) {
+  const hints = [];
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  if (typeof rawForm === 'object') {
+    // ----- WERKWOORDEN -----
+    const name = rawForm.name || '';
+    const tenseWord = name.split(' ')[0];
+    const personMatch = name.match(/(\d)e pers\./);
+    const pIdx = personMatch ? (parseInt(personMatch[1], 10) - 1) + (name.includes('mv.') ? 3 : 0) : 0;
+    const persIdx = pIdx % 3;
+
+    const TENSES = {
+      'praesens': {
+        endings: ['-o', '-s', '-t', '-mus', '-tis', '-nt'],
+        rule: 'Praesens: er zit niets tussen de stam en de persoonsuitgang. Stam + persoonsuitgang.',
+        nl: ['ik begroet', 'jij begroet', 'hij/zij begroet']
+      },
+      'imperfectum': {
+        endings: ['-bam', '-bas', '-bat', '-bamus', '-batis', '-bant'],
+        rule: 'Imperfectum herken je aan -ba-: stam + -ba- + persoonsuitgang (salutaBAm, salutaBAs, ...).',
+        nl: ['ik begroette (was aan het begroeten)', 'jij begroette', 'hij/zij begroette']
+      },
+      'perfectum': {
+        endings: ['-i', '-isti', '-it', '-imus', '-istis', '-erunt'],
+        rule: 'Perfectum: gebruik de v-stam (salutav-) met de eigen perfectumuitgangen.',
+        nl: ['ik heb begroet', 'jij hebt begroet', 'hij/zij heeft begroet']
+      },
+      'plusquamperf.': {
+        endings: ['-eram', '-eras', '-erat', '-eramus', '-eratis', '-erant'],
+        rule: 'Plusquamperfectum: v-stam (salutav-) + -era- + persoonsuitgang (salutavERAm, ...).',
+        nl: ['ik had begroet', 'jij had begroet', 'hij/zij had begroet']
+      },
+      'futurum': {
+        endings: ['-bo', '-bis', '-bit', '-bimus', '-bitis', '-bunt'],
+        rule: 'Futurum (1e vervoeging): stam + -bi- + persoonsuitgang. Alleen 1e enk. (-bo) en 3e mv. (-bunt) wijken af.',
+        nl: ['ik zal begroeten', 'jij zult begroeten', 'hij/zij zal begroeten']
+      }
+    };
+    const t = TENSES[tenseWord];
+    if (t) {
+      hints.push(t.rule);
+      const row = t.endings.map((e, i) => i === pIdx ? '❓' : e).join(' · ');
+      hints.push(`Hoe ging het rijtje van het ${tenseWord === 'plusquamperf.' ? 'plusquamperfectum' : tenseWord}? Uitgangen: ${row}. Welke past op de plek van ❓?`);
+      if (!name.includes('mv.')) {
+        hints.push(`Vertaal het eerst: ${t.nl[persIdx]}. Welke tijd en persoon is dat in het Latijn?`);
+      }
+      if (tenseWord === 'perfectum' || tenseWord === 'plusquamperf.') {
+        hints.push(`Let op: bij het ${tenseWord === 'plusquamperf.' ? 'plusquamperfectum' : 'perfectum'} verandert de stam. Je gaat uit van salutav- in plaats van salut-.`);
+      }
+    }
+    hints.push(`Bouw de vorm op in drie stukjes: stam (${item.stem}) + kenmerk van de tijd + persoonsuitgang. ${item.title} hoort bij de ${item.conjugation || '1e vervoeging'}.`);
+    return pick(hints);
+  }
+
+  // ----- NAAMWOORDEN / VOORNAAMWOORDEN -----
+  const keys = Object.keys(item.forms);
+  const valOf = k => (typeof item.forms[k] === 'string' ? item.forms[k] : item.forms[k].val);
+  const num = formKey.split(' ').pop();
+  const sameNum = keys.filter(k => k.split(' ').pop() === num);
+  const idx = sameNum.indexOf(formKey);
+
+  // 1. De buren in het rijtje
+  const neighbours = [sameNum[idx - 1], sameNum[idx + 1]].filter(k => k && valOf(k) !== correctVal);
+  if (neighbours.length) {
+    const txt = neighbours.map(k => `${k} = ${valOf(k)}`).join(' en ');
+    hints.push(`Hoe ging het rijtje van ${topicKey}? Direct ernaast in het rijtje staat: ${txt}. Welke vorm hoort daar tussen of naast?`);
+  }
+
+  // 2. Dezelfde vorm komt vaker voor in het rijtje
+  const others = keys.filter(k => k !== formKey && valOf(k) === correctVal);
+  if (others.length) {
+    hints.push(`Handig om te weten: in het rijtje van ${topicKey} zie je deze vorm ook terug bij ${others.join(' en ').replace(/\.$/, '')}.`);
+  }
+
+  // 3. Regels per naamval / geslacht
+  const isNeuter = /onz\./.test(item.title) || formKey.includes('onz.');
+  if (isNeuter && (formKey.startsWith('nom.') || formKey.startsWith('acc.'))) {
+    hints.push(`Onzijdig-regel: bij onzijdige woorden is de nominativus altijd gelijk aan de accusativus${formKey.includes('mv.') ? ', en in het meervoud eindigt die vorm op -a' : ''}.`);
+  }
+  if (item.type === 'noun' && (formKey === 'dat. mv.' || formKey === 'abl. mv.')) {
+    hints.push('Dativus en ablativus meervoud zijn bij zelfstandige naamwoorden altijd gelijk.');
+  }
+  if (item.type === 'noun' && (formKey === 'nom. mv.' || formKey === 'acc. mv.') && valOf('nom. mv.') === valOf('acc. mv.')) {
+    hints.push('Bij dit woord is de nominativus meervoud gelijk aan de accusativus meervoud.');
+  }
+
+  // 4. Stam + uitgang
+  if (item.stem) {
+    hints.push(`Dit woord heeft de stam ${item.stem} (${item.groupName || item.title}). Welke uitgang hoort bij ${demandLabel}?`);
+  }
+
+  // 5. Waar eindigt de vorm op?
+  const stemBase = (item.stem || '').replace(/-$/, '');
+  if ((item.type === 'noun' || item.type === 'adj') && stemBase && correctVal.startsWith(stemBase) && correctVal.length > stemBase.length) {
+    hints.push(`Na de stam (${item.stem}) komt de uitgang -${correctVal.slice(stemBase.length)}.`);
+  } else if (correctVal.length >= 2) {
+    const n = correctVal.length >= 4 ? 2 : 1;
+    hints.push(`De juiste vorm eindigt op -${correctVal.slice(-n)}.`);
+  }
+
+  hints.push(`Streep eerst af wat niet kan bij ${demandLabel} en let op de stam (${item.stem || item.title}).`);
+  return pick(hints);
+}
+
 function generateQuestions(isDaily = false) {
   const mode = document.getElementById('quizInputType').value;
   const questions = [];
@@ -1359,7 +1830,8 @@ function generateQuestions(isDaily = false) {
       const formKey = formKeys[Math.floor(Math.random() * formKeys.length)];
       const rawForm = item.forms[formKey];
       const correctVal = typeof rawForm === 'string' ? rawForm : rawForm.val;
-      const expl = typeof rawForm === 'object' ? rawForm.expl : `Correcte vorm voor ${formKey} van ${topicKey}.`;
+      const demandLabel = buildDemandLabel(formKey, rawForm, item);
+      const expl = typeof rawForm === 'object' ? rawForm.expl : `Correcte vorm voor ${demandLabel} van ${topicKey}.`;
 
       // PLAUSIBLE DISTRACTORS FROM THE SAME WORD / CATEGORY
       const distractors = [];
@@ -1390,12 +1862,12 @@ function generateQuestions(isDaily = false) {
       shuffleArray(options);
 
       // EFFECTIVE HINT
-      const hint = `Welke uitgang hoort bij ${formKey}? Streep af wat niet klopt en let op de stam (${item.stem || item.title}).`;
+      const hint = buildHint(item, topicKey, formKey, rawForm, correctVal, demandLabel);
 
       questions.push({
         topic: item.title,
         stem: topicKey,
-        demand: formKey,
+        demand: demandLabel,
         correct: correctVal,
         options: options,
         hint: hint,
@@ -1419,7 +1891,7 @@ function generateQuestions(isDaily = false) {
         demand: 'Wat is de juiste uitgang?',
         correct: item.answer,
         options: options,
-        hint: `Welke uitgang hoort bij ${item.prompt}?`,
+        hint: item.hints ? item.hints[Math.floor(Math.random() * item.hints.length)] : `Welke uitgang hoort bij ${item.prompt}?`,
         expl: item.expl
       });
     }
@@ -1498,6 +1970,8 @@ function renderCurrentQuestion() {
     optionsContainer.classList.add('hidden');
     typingContainer.classList.remove('hidden');
     typingInput.value = '';
+    typingInput.style.removeProperty('border-color');
+    typingInput.style.removeProperty('background-color');
     setTimeout(() => typingInput.focus(), 100);
   }
 }
@@ -1569,6 +2043,32 @@ function checkAnswer() {
     feedbackDetail.innerText = `Jouw antwoord: ${userAns} • Juiste antwoord: ${q.correct}`;
     feedbackExpl.innerText = q.expl;
   }
+
+  // Direct zichtbaar: kleur het gekozen antwoord / het juiste antwoord op de plek zelf
+  const good = ['#10B981', '#ECFDF5'];
+  const bad = ['#F87171', '#FEF2F2'];
+  const paint = (el, c) => {
+    el.classList.remove('btn-selected');
+    el.style.setProperty('border-color', c[0], 'important');
+    el.style.setProperty('background-color', c[1], 'important');
+  };
+  if (currentQuiz.mode === 'mc') {
+    document.querySelectorAll('#quizOptionsContainer button').forEach(btn => {
+      const isRight = btn.innerText.trim().toLowerCase() === q.correct.toLowerCase();
+      const isChosen = btn.innerText === currentQuiz.selected;
+      if (isRight) {
+        paint(btn, good);
+        btn.innerHTML = `${btn.innerText} <i class="fa-solid fa-circle-check text-emerald-600 ml-1"></i>`;
+      } else if (isChosen) {
+        paint(btn, bad);
+        btn.innerHTML = `${btn.innerText} <i class="fa-solid fa-circle-xmark text-red-500 ml-1"></i>`;
+      }
+    });
+  } else {
+    paint(document.getElementById('typingAnswerInput'), isCorrect ? good : bad);
+  }
+  // Scroll het feedbackvak in beeld zodat je niet hoeft te scrollen
+  setTimeout(() => feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
 
   saveProgress();
   updateRankAndThemeUI();
